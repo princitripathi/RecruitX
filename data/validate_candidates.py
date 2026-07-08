@@ -4,9 +4,11 @@ Validation script for sample_candidates.csv
 
 Checks:
 1. Exactly 50 rows exist
-2. All required columns exist
+2. All required columns exist (including previous_roles and last_active_days)
 3. Emails are unique
 4. Phone numbers are unique
+5. Data ranges are valid
+6. Experienced candidates have previous_roles populated
 """
 
 import sys
@@ -14,7 +16,15 @@ import pandas as pd
 
 
 def validate_candidates(csv_path: str = "data/sample_candidates.csv") -> bool:
-    """Validate the sample candidates CSV file."""
+    """
+    Validate the sample candidates CSV file.
+
+    Args:
+        csv_path: Path to the CSV file to validate
+
+    Returns:
+        True if validation passes, False otherwise
+    """
     errors = []
     warnings = []
 
@@ -34,6 +44,9 @@ def validate_candidates(csv_path: str = "data/sample_candidates.csv") -> bool:
         errors.append(f"Expected 50 rows, found {row_count}")
 
     # 3. Ensure all required columns exist
+    # Column order must match Master Guide DB schema:
+    # id, name, email, phone, location, skills, experience_years,
+    # education, previous_roles, profile_completeness, last_active_days
     required_columns = [
         "id",
         "name",
@@ -43,8 +56,9 @@ def validate_candidates(csv_path: str = "data/sample_candidates.csv") -> bool:
         "skills",
         "experience_years",
         "education",
+        "previous_roles",
         "profile_completeness",
-        "last_active_days_ago"
+        "last_active_days"
     ]
     missing_columns = [col for col in required_columns if col not in df.columns]
     if missing_columns:
@@ -65,9 +79,10 @@ def validate_candidates(csv_path: str = "data/sample_candidates.csv") -> bool:
             errors.append(f"Duplicate phone numbers found: {dup_list}")
 
     # Additional validations (warnings)
-    # Check for null values in required columns
+    # Check for null values in critical columns (previous_roles can be null for freshers)
+    critical_columns = [col for col in required_columns if col != "previous_roles"]
     if not missing_columns:
-        null_counts = df[required_columns].isnull().sum()
+        null_counts = df[critical_columns].isnull().sum()
         for col, count in null_counts.items():
             if count > 0:
                 warnings.append(f"Column '{col}' has {count} null values")
@@ -84,11 +99,20 @@ def validate_candidates(csv_path: str = "data/sample_candidates.csv") -> bool:
         if not invalid_completeness.empty:
             warnings.append(f"Invalid profile_completeness (outside 0-100): {len(invalid_completeness)} rows")
 
-    # Check last_active_days_ago is positive
-    if "last_active_days_ago" in df.columns:
-        invalid_active = df[df["last_active_days_ago"] < 0]
+    # Check last_active_days is positive
+    if "last_active_days" in df.columns:
+        invalid_active = df[df["last_active_days"] < 0]
         if not invalid_active.empty:
-            warnings.append(f"Negative last_active_days_ago: {len(invalid_active)} rows")
+            warnings.append(f"Negative last_active_days: {len(invalid_active)} rows")
+
+    # Check that experienced candidates (>1 year) have previous_roles populated
+    if "previous_roles" in df.columns and "experience_years" in df.columns:
+        experienced_no_roles = df[
+            (df["experience_years"] > 1) & (df["previous_roles"].isnull())
+        ]
+        if not experienced_no_roles.empty:
+            names = experienced_no_roles["name"].tolist()
+            warnings.append(f"Experienced candidates without previous_roles: {names}")
 
     # Print results
     if errors:
@@ -102,6 +126,12 @@ def validate_candidates(csv_path: str = "data/sample_candidates.csv") -> bool:
     print(f"  - Columns: {len(required_columns)} required columns present")
     print(f"  - Unique emails: {df['email'].nunique()}")
     print(f"  - Unique phones: {df['phone'].nunique()}")
+
+    # Count previous_roles stats
+    if "previous_roles" in df.columns:
+        filled = df["previous_roles"].notna().sum()
+        blank = df["previous_roles"].isna().sum()
+        print(f"  - Previous roles: {filled} filled, {blank} blank (freshers)")
 
     if warnings:
         print("\n[WARN] Warnings:")
