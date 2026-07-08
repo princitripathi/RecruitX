@@ -5,7 +5,8 @@
       "Read(//c/Users/princ/Desktop/RecruitX/database//**)",
       "Read(//c/Users/princ/Desktop/RecruitX/embeddings//**)",
       "Read(//c/Users/princ/Desktop/RecruitX/scoring//**)",
-      "Read(//c/Users/princ/Desktop/RecruitX/api//**)"
+      "Read(//c/Users/princ/Desktop/RecruitX/api//**)",
+      "Bash(python *)"
     ]
   }
 }

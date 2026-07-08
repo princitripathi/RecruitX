@@ -1,0 +1,51 @@
+id,name,email,phone,location,skills,experience_years,education,profile_completeness,last_active_days_ago
+1,Aarav Sharma,aarav.sharma@email.com,9876543210,Mumbai,"Python, FastAPI, SQL, Docker, AWS",5,B.Tech Computer Science,85,12
+2,Priya Patel,priya.patel@email.com,9876543211,Bangalore,"Java, Spring Boot, MySQL, Kubernetes, GCP",7,M.Tech Computer Science,92,5
+3,Rohan Gupta,rohan.gupta@email.com,9876543212,Delhi,"React, Node.js, TypeScript, MongoDB, Redis",3,B.Tech Information Technology,78,28
+4,Ananya Singh,ananya.singh@email.com,9876543213,Hyderabad,"Python, Pandas, NumPy, Scikit-learn, TensorFlow",4,B.Tech Data Science,88,18
+5,Vikram Reddy,vikram.reddy@email.com,9876543214,Chennai,"Go, Microservices, PostgreSQL, RabbitMQ, Prometheus",6,B.Tech Computer Engineering,90,8
+6,Sneha Nair,sneha.nair@email.com,9876543215,Pune,"JavaScript, Vue.js, Express, GraphQL, Firebase",2,BCA,72,45
+7,Arjun Iyer,arjun.iyer@email.com,9876543216,Kolkata,"C++, Qt, Embedded Systems, RTOS, Linux Kernel",8,M.Tech Embedded Systems,95,3
+8,Meera Joshi,meera.joshi@email.com,9876543217,Ahmedabad,"Python, Django, REST APIs, Celery, Elasticsearch",4,B.Tech Computer Science,82,67
+9,Karan Malhotra,karan.malhotra@email.com,9876543218,Jaipur,"React Native, Flutter, Dart, SQLite, CI/CD",3,B.Tech Software Engineering,75,91
+10,Divya Chandra,divya.chandra@email.com,9876543219,Lucknow,"SQL, Tableau, Power BI, ETL, Data Warehousing",5,MCA,87,14
+11,Rahul Verma,rahul.verma@email.com,9876543220,Indore,"Python, Flask, PostgreSQL, Docker, AWS Lambda",2,B.Tech Computer Science,68,156
+12,Pooja Agarwal,pooja.agarwal@email.com,9876543221,Bhopal,"Java, Hibernate, Oracle, JUnit, Maven",6,B.Tech Computer Engineering,91,22
+13,Siddharth Bhat,siddharth.bhat@email.com,9876543222,Coimbatore,"Machine Learning, PyTorch, OpenCV, NLP, MLOps",4,M.Tech AI & ML,93,9
+14,Neha Sharma,neha.sharma@email.com,9876543223,Surat,"Angular, RxJS, NgRx, TypeScript, Jest",3,B.Tech Information Technology,79,33
+15,Aditya Singh,aditya.singh@email.com,9876543224,Nagpur,"DevOps, Terraform, Ansible, Jenkins, Grafana, EKS",5,B.Tech Computer Science,89,11
+16,Kavya Iyer,kavya.iyer@email.com,9876543225,Kochi,"Data Engineering, Spark, Kafka, Airflow, Snowflake",4,M.Tech Data Engineering,86,78
+17,Manish Patel,manish.patel@email.com,9876543226,Vadodara,"C#, .NET Core, Entity Framework, Azure, SQL Server",7,B.Tech Computer Engineering,94,6
+18,Riya Desai,riya.desai@email.com,9876543227,Rajkot,"Python, FastAPI, WebSockets, AsyncIO, PostgreSQL",2,BCA,70,189
+19,Nikhil Jain,nikhil.jain@email.com,9876543228,Udaipur,"React, Redux, Next.js, Tailwind CSS, Testing Library",3,B.Tech Software Engineering,76,41
+20,Sunita Rao,sunita.rao@email.com,9876543229,Mysore,"Java, Spring Security, OAuth2, JWT, Swagger",5,MCA,84,203
+21,Amit Kumar,amit.kumar@email.com,9876543230,Patna,"Go, gRPC, Protocol Buffers, Consul, Vault",4,B.Tech Computer Science,81,15
+22,Shreya Menon,shreya.menon@email.com,9876543231,Thiruvananthapuram,"Python, BeautifulSoup, Selenium, Scrapy, Requests",1,B.Tech Computer Science,65,267
+23,Deepak Yadav,deepak.yadav@email.com,9876543232,Gurugram,"Kubernetes, Helm, Istio, ArgoCD, Monitoring",6,M.Tech Cloud Computing,96,2
+24,Tanvi Shah,tanvi.shah@email.com,9876543233,Ahmedabad,"TypeScript, NestJS, Prisma, PostgreSQL, WebSockets",3,B.Tech Information Technology,77,88
+25,Varun Nair,varun.nair@email.com,9876543234,Kozhikode,"Rust, Actix, Diesel, Tokio, Wasm",4,B.Tech Computer Engineering,83,55
+26,Aishwarya Reddy,aishwarya.reddy@email.com,9876543235,Vijayawada,"Data Science, R, Shiny, H2O, AutoML",5,M.Tech Data Science,90,19
+27,Harish Chandra,harish.chandra@email.com,9876543236,Noida,"PHP, Laravel, MySQL, Vue.js, Docker",4,B.Tech Computer Science,80,134
+28,Megha Bansal,megha.bansal@email.com,9876543237,Chandigarh,"Python, DRF, Celery Beat, Flower, Redis",3,B.Tech Software Engineering,74,298
+29,Rohit Sharma,rohit.sharma@email.com,9876543238,Faridabad,"Android, Kotlin, Jetpack Compose, Room, Hilt",2,BCA,71,72
+30,Poonam Gupta,poonam.gupta@email.com,9876543239,Ghaziabad,"iOS, Swift, SwiftUI, CoreData, Combine",5,B.Tech Computer Engineering,88,37
+31,Saurabh Singh,saurabh.singh@email.com,9876543240,Meerut,"Cybersecurity, Penetration Testing, Burp Suite, Metasploit, Wireshark",7,M.Tech Cybersecurity,97,1
+32,Nidhi Agarwal,nidhi.agarwal@email.com,9876543241,Aligarh,"Blockchain, Solidity, Web3.js, Hardhat, IPFS",3,B.Tech Computer Science,73,167
+33,Gaurav Malhotra,gaurav.malhotra@email.com,9876543242,Ambala,"Python, Airflow, dbt, BigQuery, Looker",4,M.Tech Data Engineering,85,48
+34,Simran Kaur,simran.kaur@email.com,9876543243,Jalandhar,"React, GraphQL, Apollo, TypeScript, Storybook",2,B.Tech Information Technology,69,234
+35,Abhishek Yadav,abhishek.yadav@email.com,9876543244,Bareilly,"Java, Quarkus, Panache, Kafka Streams, Jaeger",5,B.Tech Computer Engineering,92,17
+36,Kritika Sharma,kritika.sharma@email.com,9876543245,Moradabad,"MLOps, MLflow, Kubeflow, Seldon, Feast",4,M.Tech AI & ML,89,26
+37,Pranav Joshi,pranav.joshi@email.com,9876543246,Rajkot,"Full Stack, Python, React, PostgreSQL, Docker",3,B.Tech Software Engineering,78,145
+38,Ruchi Patel,ruchi.patel@email.com,9876543247,Anand,"Data Analysis, Excel, SQL, Python, Tableau",2,BCA,67,312
+39,Vivek Nair,vivek.nair@email.com,9876543248,Kannur,"Embedded C, FreeRTOS, STM32, CAN, I2C",6,M.Tech Embedded Systems,94,4
+40,Shweta Reddy,shweta.reddy@email.com,9876543249,Tirupati,"DevSecOps, Snyk, Trivy, OWASP ZAP, SonarQube",5,B.Tech Computer Science,91,13
+41,Ankit Tiwari,ankit.tiwari@email.com,9876543250,Varanasi,"Python, Celery, RabbitMQ, Redis, FastAPI",4,B.Tech Computer Engineering,84,59
+42,Priyanka Singh,priyanka.singh@email.com,9876543251,Prayagraj,"Frontend, Vue.js, Nuxt.js, Pinia, Vitest",3,B.Tech Information Technology,76,201
+43,Mohit Verma,mohit.verma@email.com,9876543252,Jodhpur,"Backend, Go, Gin, GORM, MySQL, Docker",4,MCA,82,87
+44,Divya Menon,divya.menon@email.com,9876543253,Kollam,"QA Automation, Cypress, Playwright, Jest, GitHub Actions",2,BCA,70,178
+45,Rajesh Iyer,rajesh.iyer@email.com,9876543254,Thrissur,"Site Reliability, Prometheus, Grafana, Loki, Tempo",7,M.Tech Cloud Computing,95,7
+46,Neha Bhat,neha.bhat@email.com,9876543255,Mangalore,"Bioinformatics, Python, Biopython, Nextflow, SLURM",5,M.Tech Bioinformatics,88,31
+47,Akash Gupta,akash.gupta@email.com,9876543256,Dehradun,"Game Dev, Unity, C#, Shader Graph, Photon",3,B.Tech Computer Science,72,256
+48,Swati Agarwal,swati.agarwal@email.com,9876543257,Haldwani,"Cloud Architecture, AWS, Terraform, CDK, Well-Architected",6,M.Tech Cloud Architecture,93,10
+49,Vinay Sharma,vinay.sharma@email.com,9876543258,Shimla,"Mobile, Flutter, Riverpod, Firebase, RevenueCat",2,B.Tech Software Engineering,68,389
+50,Anjali Nair,anjali.nair@email.com,9876543259,Palakkad,"Research, PyTorch Lightning, Hydra, Weights & Biases, Ray",4,M.Tech AI Research,90,23
