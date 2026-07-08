@@ -1,0 +1,37 @@
+Data Scientist - Machine Learning
+
+We are seeking a Data Scientist to build and deploy machine learning models that drive business value. You will work with large datasets, develop predictive models, and collaborate with engineering to productionize solutions.
+
+Key Responsibilities:
+- Explore and analyze large datasets to uncover insights
+- Build and train ML models (classification, regression, clustering, NLP)
+- Feature engineering and model optimization
+- Deploy models to production using MLOps best practices
+- A/B testing and model monitoring
+- Collaborate with product and business teams
+- Stay updated with latest ML research and techniques
+
+Required Skills:
+- Python (3+ years) - pandas, numpy, scikit-learn
+- Machine Learning algorithms (supervised & unsupervised)
+- Deep Learning (TensorFlow/PyTorch) - 1+ year
+- SQL - Advanced querying
+- Statistics & Probability - Strong foundation
+- Data visualization (Matplotlib, Seaborn, Plotly)
+- Jupyter Notebooks
+
+Preferred Skills:
+- NLP (spaCy, Hugging Face transformers)
+- Computer Vision (OpenCV, YOLO)
+- MLOps (MLflow, Kubeflow, Airflow)
+- Cloud ML (AWS SageMaker, GCP Vertex AI, Azure ML)
+- Big Data (Spark, Hadoop)
+- Time Series Analysis
+- Recommender Systems
+- Experimentation (A/B testing frameworks)
+
+Experience: 2-4 years
+Education: M.Tech/M.S. in CS/Data Science/Statistics or B.Tech with strong portfolio
+Seniority: Mid-level
+
+Benefits: Remote-friendly, conference budget, GPU access, research time.

@@ -1,0 +1,83 @@
+# Render.com Deployment Configuration
+# This file deploys RecruitX API to Render free tier
+# Connect your GitHub repo to Render and it will auto-detect this file
+
+services:
+  # -----------------------------------------
+  # RecruitX FastAPI Backend Service
+  # -----------------------------------------
+  - type: web
+    name: recruitx-api
+    env: python
+    region: oregon  # Change to your preferred region
+    plan: free
+    buildCommand: |
+      pip install --upgrade pip
+      pip install -r requirements.txt
+    startCommand: uvicorn api.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: OPENROUTER_API_KEY
+        sync: false  # Set this manually in Render dashboard (Secret)
+      - key: OPENROUTER_BASE_URL
+        value: https://openrouter.ai/api/v1
+      - key: OPENROUTER_MODEL
+        value: mistralai/mistral-7b-instruct:free
+      - key: EMBEDDING_MODEL
+        value: sentence-transformers/all-MiniLM-L6-v2
+      - key: EMBEDDING_DIMENSION
+        value: "384"
+      - key: DATABASE_PATH
+        value: /opt/render/project/src/data/recruitx.db
+      - key: FAISS_INDEX_PATH
+        value: /opt/render/project/src/data/faiss_index.bin
+      - key: FAISS_ID_MAP_PATH
+        value: /opt/render/project/src/data/faiss_id_map.pkl
+      - key: WEIGHT_SEMANTIC
+        value: "0.50"
+      - key: WEIGHT_SKILL
+        value: "0.30"
+      - key: WEIGHT_SIGNAL
+        value: "0.20"
+      - key: LLM_TEMPERATURE
+        value: "0.1"
+      - key: LLM_MAX_TOKENS
+        value: "2000"
+      - key: LOG_LEVEL
+        value: INFO
+      - key: PYTHONPATH
+        value: /opt/render/project/src
+    # Pre-deploy command to setup database and build index
+    preDeployCommand: |
+      python database/db_setup.py
+      python embeddings/build_index.py
+
+  # -----------------------------------------
+  # RecruitX Streamlit Frontend Service (Optional)
+  # Uncomment if you want to deploy frontend separately
+  # -----------------------------------------
+  # - type: web
+  #   name: recruitx-frontend
+  #   env: python
+  #   region: oregon
+  #   plan: free
+  #   buildCommand: pip install -r requirements.txt
+  #   startCommand: streamlit run frontend/dashboard.py --server.port $PORT --server.address 0.0.0.0 --server.headless true
+  #   envVars:
+  #     - key: API_BASE_URL
+  #       value: https://recruitx-api.onrender.com  # Update with your API URL
+  #     - key: PYTHONPATH
+  #       value: /opt/render/project/src
+
+# -----------------------------------------
+# Notes for Deployment
+# -----------------------------------------
+# 1. Push this repo to GitHub
+# 2. Go to https://dashboard.render.com
+# 3. Click "New" -> "Blueprint" -> Connect your GitHub repo
+# 4. Render will detect render.yaml and create services
+# 5. Add OPENROUTER_API_KEY as a Secret in the API service settings
+# 6. The free tier spins down after 15 min of inactivity (cold start ~30s)
+# 7. SQLite database persists on Render disk (survives restarts)
+# 8. FAISS index is rebuilt on each deploy (preDeployCommand)

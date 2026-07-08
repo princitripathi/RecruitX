@@ -1,0 +1,39 @@
+Product Manager - Technical
+
+We are looking for a Technical Product Manager to own the product lifecycle for our AI-powered platform. You will bridge the gap between technical teams and business stakeholders to deliver exceptional products.
+
+Key Responsibilities:
+- Define product vision, strategy, and roadmap
+- Gather and prioritize requirements from stakeholders
+- Write detailed PRDs (Product Requirement Documents)
+- Work closely with engineering, design, and data science
+- Define and track KPIs/OKRs for product success
+- Conduct user research and competitive analysis
+- Manage sprint planning and backlog grooming
+- Communicate product updates to leadership
+
+Required Skills:
+- Product Management (3+ years) - Technical products
+- Agile/Scrum methodologies
+- SQL - Can write own queries for analysis
+- Data-driven decision making
+- Strong written & verbal communication
+- Stakeholder management
+- Prioritization frameworks (RICE, WSJF)
+- API/Technical architecture understanding
+
+Preferred Skills:
+- AI/ML product experience
+- B2B SaaS background
+- UX/UI design fundamentals
+- Experimentation & A/B testing
+- Jira, Confluence, Productboard
+- Figma/Miro for prototyping
+- Computer Science degree or equivalent technical background
+- Startup experience
+
+Experience: 4-6 years
+Education: B.Tech/B.E. + MBA preferred, or equivalent experience
+Seniority: Senior
+
+We value ownership, user empathy, and technical depth. Join us to shape the future of AI recruitment!

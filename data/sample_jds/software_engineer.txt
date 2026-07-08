@@ -1,0 +1,36 @@
+Software Engineer - Backend (Python/FastAPI)
+
+We are looking for a talented Backend Software Engineer to join our growing engineering team. You will be responsible for designing, building, and maintaining scalable backend services and APIs.
+
+Key Responsibilities:
+- Design and develop RESTful APIs using Python and FastAPI
+- Build scalable microservices architecture
+- Write clean, maintainable, and well-tested code
+- Optimize database queries and improve system performance
+- Collaborate with frontend developers and product managers
+- Participate in code reviews and architectural discussions
+- Implement authentication, authorization, and security best practices
+
+Required Skills:
+- Python (3+ years)
+- FastAPI or Flask (2+ years)
+- SQL (PostgreSQL, MySQL) - Strong proficiency
+- REST API design principles
+- Git version control
+- Unit testing (pytest)
+- Docker basics
+
+Preferred Skills:
+- Redis for caching
+- Celery for background tasks
+- Kubernetes/Docker Swarm
+- CI/CD pipelines (GitHub Actions, GitLab CI)
+- AWS/GCP cloud services
+- Message queues (RabbitMQ, Kafka)
+- GraphQL
+
+Experience: 3-5 years
+Education: B.Tech/B.E. in Computer Science or equivalent
+Seniority: Mid-level
+
+We offer competitive salary, flexible working hours, learning budget, and a collaborative culture.
