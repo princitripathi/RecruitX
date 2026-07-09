@@ -77,3 +77,7 @@ temp/
 
 # Private documentation
 docs/RecruitX_Master_Guide.md
+
+# Runtime uploads
+uploads/*
+!uploads/.gitkeep
