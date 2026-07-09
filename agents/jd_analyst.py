@@ -215,8 +215,9 @@ class JDAnalystAgent:
             except (json.JSONDecodeError, Exception) as e:
                 last_error = e
                 logger.warning(
-                    "Analysis attempt %d/%d failed: %s",
-                    attempt + 1, self.max_retries, str(e)
+                    "Analysis attempt %d/%d failed",
+                    attempt + 1,
+                    self.max_retries,
                 )
 
                 if attempt < self.max_retries - 1:
