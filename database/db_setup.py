@@ -1,4 +1,4 @@
- """
+"""
 database/db_setup.py — Database Initialization for RecruitX
 
 This script:
