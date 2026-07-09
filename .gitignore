@@ -74,3 +74,6 @@ temp/
 # Backup files
 *.bak
 *.backup
+
+# Private documentation
+docs/RecruitX_Master_Guide.md
