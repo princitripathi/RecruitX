@@ -9,7 +9,7 @@ uvicorn
 streamlit
 pandas
 numpy
-pypdf2
+pypdf
 python-docx
 python-dotenv
 pydantic

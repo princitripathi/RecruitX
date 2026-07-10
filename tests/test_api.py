@@ -353,7 +353,7 @@ class TestDeleteCandidate:
 
 
 # ===================================================================
-# Resume Upload (Stub)
+# Resume Upload (Phase 13 — AI Resume Parser)
 # ===================================================================
 
 
@@ -368,24 +368,88 @@ class TestResumeUpload:
         assert response.status_code == 400
         assert "Invalid file type" in response.json()["detail"]
 
-    def test_upload_valid_pdf(self):
+    @patch("api.routes.resumes.ResumeParser")
+    def test_upload_valid_pdf(self, mock_parser_class):
+        mock_instance = MagicMock()
+        mock_instance.process_resume.return_value = {
+            "candidate": {
+                "id": 1,
+                "name": "Rahul Sharma",
+                "email": "rahul@test.com",
+                "skills": "Python, SQL",
+                "experience_years": 5.0,
+                "location": "Bangalore",
+            },
+            "message": "Resume parsed successfully — candidate 'Rahul Sharma' (ID 1) created.",
+            "is_new": True,
+        }
+        mock_parser_class.return_value = mock_instance
+
         response = client.post(
             "/api/upload-resume",
             files={"file": ("resume.pdf", b"%PDF-1.4 fake pdf content", "application/pdf")},
         )
         assert response.status_code == 200
         data = response.json()
-        assert "uploaded successfully" in data["message"]
-        assert data["candidate"] is None
+        assert data["is_new"] is True
+        assert data["candidate"] is not None
+        assert data["candidate"]["name"] == "Rahul Sharma"
 
-    def test_upload_valid_docx(self):
+    @patch("api.routes.resumes.ResumeParser")
+    def test_upload_valid_docx(self, mock_parser_class):
+        mock_instance = MagicMock()
+        mock_instance.process_resume.return_value = {
+            "candidate": {
+                "id": 2,
+                "name": "Priya Singh",
+                "email": "priya@test.com",
+                "skills": "Java, Spring",
+                "experience_years": 3.0,
+            },
+            "message": "Resume parsed successfully — candidate 'Priya Singh' (ID 2) created.",
+            "is_new": True,
+        }
+        mock_parser_class.return_value = mock_instance
+
         response = client.post(
             "/api/upload-resume",
             files={"file": ("resume.docx", b"fake docx content", "application/vnd.openxmlformats-officedocument.wordprocessingml.document")},
         )
         assert response.status_code == 200
         data = response.json()
-        assert data["candidate"] is None
+        assert data["candidate"]["name"] == "Priya Singh"
+
+    @patch("api.routes.resumes.ResumeParser")
+    def test_upload_duplicate_resume(self, mock_parser_class):
+        mock_instance = MagicMock()
+        mock_instance.process_resume.return_value = {
+            "candidate": {"id": 5, "name": "Existing User", "email": "existing@test.com"},
+            "message": "Duplicate resume detected — existing candidate 'Existing User' (ID 5) returned.",
+            "is_new": False,
+        }
+        mock_parser_class.return_value = mock_instance
+
+        response = client.post(
+            "/api/upload-resume",
+            files={"file": ("resume.pdf", b"same content same hash", "application/pdf")},
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert data["is_new"] is False
+        assert "Duplicate" in data["message"]
+
+    @patch("api.routes.resumes.ResumeParser")
+    def test_upload_parser_error(self, mock_parser_class):
+        mock_instance = MagicMock()
+        mock_instance.process_resume.side_effect = ValueError("Invalid email format")
+        mock_parser_class.return_value = mock_instance
+
+        response = client.post(
+            "/api/upload-resume",
+            files={"file": ("resume.pdf", b"some content", "application/pdf")},
+        )
+        assert response.status_code == 400
+        assert "Invalid email" in response.json()["detail"]
 
 
 # ===================================================================

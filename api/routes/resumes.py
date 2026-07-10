@@ -4,23 +4,24 @@ api/routes/resumes.py — Resume Upload API Endpoint for RecruitX
 Endpoint:
     POST /api/upload-resume — Upload a PDF or DOCX resume file
 
-This is a lightweight placeholder implementation for Phase 11.
-Full resume parsing with text extraction and candidate auto-creation
-will be implemented in Phase 13 (Resume Parser).
-
-Current behavior:
-    1. Validates file type (PDF or DOCX)
-    2. Validates file size (max 10 MB)
-    3. Saves file to uploads/ directory with unique filename
-    4. Returns placeholder response
+This endpoint accepts a resume file upload, runs it through the ResumeParser
+(implemented in Phase 13), which:
+    1. Validates file type and size
+    2. Extracts text from PDF/DOCX
+    3. Cleans the extracted text
+    4. Detects duplicates via MD5 hash
+    5. Parses the text with LLM into a structured candidate profile
+    6. Saves the candidate to the database
+    7. Adds the candidate to the FAISS vector index
 """
 
 import logging
 import os
 import uuid
-from typing import Optional
 
 from fastapi import APIRouter, HTTPException, UploadFile
+
+from utils.resume_parser import ResumeParser
 
 logger = logging.getLogger(__name__)
 
@@ -37,21 +38,22 @@ UPLOAD_DIR = os.getenv("UPLOAD_DIR", "uploads")
 @router.post("/api/upload-resume")
 async def upload_resume(file: UploadFile):
     """
-    Upload a resume file (PDF or DOCX).
+    Upload a resume file (PDF or DOCX) and parse it into a candidate profile.
 
-    Placeholder implementation — validates and saves the file.
-    Full parsing with candidate extraction comes in Phase 13.
+    The pipeline extracts text, detects duplicates via MD5 hash, parses
+    with LLM, saves to the database, and updates the FAISS vector index.
 
     Args:
         file: The uploaded resume file (multipart upload).
 
     Returns:
-        Dict with file info and a message indicating full parsing
-        will be available in a future update.
+        Dict with the parsed or existing candidate, message, and dedup flag.
 
     Raises:
-        HTTPException 400: If file type is invalid or file is too large.
-        HTTPException 500: If file save fails.
+        HTTPException 400: If file type is invalid, file is too large,
+                           or parsing fails.
+        HTTPException 409: If a duplicate is detected.
+        HTTPException 500: If file save or processing fails.
     """
     # Validate file extension
     file_ext: str = ""
@@ -99,18 +101,25 @@ async def upload_resume(file: UploadFile):
             file.filename, save_path, file_size,
         )
 
-        return {
-            "candidate": None,
-            "message": (
-                "Resume uploaded successfully. "
-                "Full parsing with text extraction and candidate auto-creation "
-                "will be available in Phase 13."
-            ),
-        }
-
     except OSError as e:
         logger.error("Failed to save uploaded file: %s", str(e))
         raise HTTPException(
             status_code=500,
             detail=f"Failed to save uploaded file: {e}",
         )
+
+    # Run through ResumeParser
+    try:
+        parser = ResumeParser()
+        filename = file.filename or "unknown"
+        result = parser.process_resume(save_path, filename)
+        return result
+    except ValueError as e:
+        logger.error("Resume parsing validation error: %s", str(e))
+        raise HTTPException(status_code=400, detail=str(e))
+    except RuntimeError as e:
+        logger.error("Resume parsing runtime error: %s", str(e))
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error("Unexpected error during resume parsing: %s", str(e))
+        raise HTTPException(status_code=500, detail="Internal error during resume processing")

@@ -665,15 +665,17 @@ def _render_add_candidate() -> None:
 
 def _render_upload_resume() -> None:
     """
-    Show a file uploader for resumes.
+    Show a file uploader for resumes with AI parsing.
 
-    Parsing is a stub — full text extraction comes in Phase 13.
-    The file is saved server-side via POST /api/upload-resume.
+    Uploaded resume is automatically parsed by the AI Resume Parser (Phase 13):
+    extracts text, detects duplicates via MD5 hash, parses with LLM into
+    a structured candidate profile, saves to database, and adds to FAISS index.
     """
     st.subheader("Upload Resume")
     st.markdown(
-        "Upload a PDF or DOCX resume file. "
-        "Full parsing with auto-candidate-creation will be available in Phase 13."
+        "Upload a PDF or DOCX resume file. The AI Resume Parser will "
+        "automatically extract text, detect duplicates, and create a "
+        "structured candidate profile in the database."
     )
 
     uploaded_file = st.file_uploader(
@@ -687,17 +689,36 @@ def _render_upload_resume() -> None:
             st.error("File size exceeds the 10 MB limit.")
             return
 
-        if st.button("📤 Upload Resume", type="primary"):
-            with st.spinner("Uploading resume..."):
+        if st.button("📤 Upload and Parse Resume", type="primary"):
+            with st.spinner("🤖 AI is parsing the resume..."):
                 result = api_post_file(
                     "/api/upload-resume",
                     uploaded_file.getvalue(),
                     uploaded_file.name,
                 )
             if result:
-                st.success(result.get("message", "Resume uploaded successfully."))
-                if result.get("candidate"):
-                    st.json(result["candidate"])
+                candidate = result.get("candidate")
+                is_new = result.get("is_new", True)
+
+                if is_new:
+                    st.success(result.get("message", "Resume parsed successfully!"))
+                else:
+                    st.info(result.get("message", "Duplicate resume detected."))
+
+                if candidate:
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        st.markdown(f"**Name:** {candidate.get('name', 'N/A')}")
+                        st.markdown(f"**Email:** {candidate.get('email', 'N/A')}")
+                        st.markdown(f"**Phone:** {candidate.get('phone', 'N/A')}")
+                        st.markdown(f"**Location:** {candidate.get('location', 'N/A')}")
+                        st.markdown(f"**Education:** {candidate.get('education', 'N/A')}")
+                    with col2:
+                        st.markdown(f"**Skills:** {candidate.get('skills', 'N/A')}")
+                        st.markdown(f"**Experience:** {candidate.get('experience_years', 0)} years")
+                        st.markdown(f"**Previous Roles:** {candidate.get('previous_roles', 'N/A')}")
+                        st.markdown(f"**Profile Completeness:** {candidate.get('profile_completeness', 0)}%")
+                        st.markdown(f"**Candidate ID:** {candidate.get('id', 'N/A')}")
 
 
 # ============================================================
