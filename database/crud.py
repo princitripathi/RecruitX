@@ -289,8 +289,8 @@ def search_candidates(
 
     # Add location filter
     if location:
-        query += " AND LOWER(location) = ?"
-        params.append(location.lower())
+        query += " AND LOWER(location) LIKE ?"
+        params.append(f"%{location.lower()}%")
 
     # Add experience range filter
     if min_experience is not None:

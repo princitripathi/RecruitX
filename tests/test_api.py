@@ -453,25 +453,68 @@ class TestResumeUpload:
 
 
 # ===================================================================
-# Chat (Stub)
+# Chat (Phase 14 — Real Agent)
 # ===================================================================
 
 
 class TestChatEndpoint:
     """POST /api/chat"""
 
-    def test_chat_returns_placeholder(self):
-        response = client.post(
-            "/api/chat",
-            json={
-                "message": "Show Python developers",
-                "session_id": "test-session-123",
+    @patch("agents.chat_agent.search_candidates")
+    @patch("api.routes.chat.add_chat_message")
+    @patch("api.routes.chat.get_chat_history")
+    @patch("api.routes.chat.get_db_connection")
+    def test_chat_search_fallback(
+        self, mock_conn, mock_history, mock_add_msg, mock_search
+    ):
+        """
+        Chat endpoint returns real candidate results via the fallback
+        keyword-matching pipeline when no API key is available.
+        """
+        from agents.chat_agent import ChatAgent
+        import api.routes.chat as chat_module
+
+        mock_history.return_value = []
+        mock_search.return_value = [
+            {
+                "id": 1,
+                "name": "Rahul Sharma",
+                "email": "rahul@test.com",
+                "phone": "9876543210",
+                "location": "Bangalore",
+                "skills": "Python, FastAPI, SQL",
+                "experience_years": 3.0,
+                "education": "B.Tech CS",
+                "previous_roles": "Data Analyst at TCS",
+                "profile_completeness": 90,
+                "last_active_days": 5,
             },
-        )
-        assert response.status_code == 200
-        data = response.json()
-        assert "under construction" in data["response"].lower()
-        assert data["candidates"] == []
+        ]
+
+        # Force fallback mode by temporarily replacing the agent
+        # with one that has no API key configured
+        original_agent = chat_module._chat_agent
+        chat_module._chat_agent = ChatAgent(api_key="")
+
+        try:
+            response = client.post(
+                "/api/chat",
+                json={
+                    "message": "Show Python developers",
+                    "session_id": "test-session-123",
+                },
+            )
+            assert response.status_code == 200
+            data = response.json()
+            assert isinstance(data["response"], str)
+            assert len(data["response"]) > 0
+            assert isinstance(data["candidates"], list)
+            assert len(data["candidates"]) == 1
+            assert data["candidates"][0]["name"] == "Rahul Sharma"
+            assert data["session_id"] == "test-session-123"
+            assert data["intent"] == "search_candidates"
+        finally:
+            chat_module._chat_agent = original_agent
 
     def test_chat_missing_message_returns_422(self):
         response = client.post(
