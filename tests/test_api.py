@@ -525,6 +525,121 @@ class TestChatEndpoint:
 
 
 # ===================================================================
+# Interview Questions (Phase 15)
+# ===================================================================
+
+
+class TestInterviewQuestions:
+    """POST /api/interview-questions"""
+
+    VALID_PAYLOAD = {
+        "candidate_id": 1,
+        "candidate_name": "Rahul Sharma",
+        "candidate_skills": "Python, SQL, FastAPI",
+        "candidate_experience_years": 5.0,
+        "candidate_previous_roles": "Data Analyst at TCS",
+        "candidate_education": "B.Tech CS",
+        "job_description": "Senior Python Developer with FastAPI experience.",
+        "skill_gap_matched": ["Python", "FastAPI"],
+        "skill_gap_missing": ["Docker", "Kubernetes"],
+        "skill_gap_bonus": ["SQL"],
+        "explanation": "Rank #1. Matched 2 skill(s), missing 2 skill(s).",
+    }
+
+    @patch("api.routes.interviews._generator")
+    def test_interview_questions_success(self, mock_generator):
+        mock_instance = MagicMock()
+        mock_instance.generate.return_value = MagicMock(
+            questions=[
+                "Question 1 about Docker?",
+                "Question 2 about Kubernetes?",
+                "Question 3 about experience?",
+                "Question 4 about FastAPI?",
+                "Question 5 about SQL?",
+            ]
+        )
+        mock_generator.generate = mock_instance.generate
+
+        # Patch the singleton with a fresh mock
+        import api.routes.interviews as interviews_module
+
+        original = interviews_module._generator
+        interviews_module._generator = MagicMock()
+        interviews_module._generator.generate.return_value = MagicMock(
+            questions=[
+                "Question 1 about Docker?",
+                "Question 2 about Kubernetes?",
+                "Question 3 about experience?",
+                "Question 4 about FastAPI?",
+                "Question 5 about SQL?",
+            ]
+        )
+
+        try:
+            response = client.post("/api/interview-questions", json=self.VALID_PAYLOAD)
+            assert response.status_code == 200
+            data = response.json()
+            assert data["candidate_id"] == 1
+            assert len(data["questions"]) == 5
+            assert "Docker" in data["questions"][0]
+        finally:
+            interviews_module._generator = original
+
+    def test_interview_questions_missing_fields_returns_422(self):
+        response = client.post(
+            "/api/interview-questions",
+            json={},
+        )
+        assert response.status_code == 422
+
+    def test_interview_questions_missing_jd_returns_422(self):
+        payload = self.VALID_PAYLOAD.copy()
+        payload["job_description"] = ""
+        response = client.post(
+            "/api/interview-questions",
+            json=payload,
+        )
+        assert response.status_code == 422
+
+    @patch("api.routes.interviews._generator")
+    def test_interview_questions_generator_value_error(self, mock_generator):
+        mock_generator.generate.side_effect = ValueError("Invalid candidate data")
+
+        response = client.post(
+            "/api/interview-questions",
+            json=self.VALID_PAYLOAD,
+        )
+        assert response.status_code == 400
+        assert "Invalid candidate" in response.json()["detail"]
+
+    @patch("api.routes.interviews._generator")
+    def test_interview_questions_generator_runtime_error(self, mock_generator):
+        mock_generator.generate.side_effect = RuntimeError("LLM failed after 3 retries")
+
+        response = client.post(
+            "/api/interview-questions",
+            json=self.VALID_PAYLOAD,
+        )
+        assert response.status_code == 500
+        assert "LLM failed" in response.json()["detail"]
+
+    @patch("api.routes.interviews._generator")
+    def test_interview_questions_stateless(self, mock_generator):
+        """Calling the endpoint twice should regenerate (no caching)."""
+        mock_generator.generate.return_value = MagicMock(
+            questions=["Q1", "Q2", "Q3", "Q4", "Q5"]
+        )
+
+        response1 = client.post("/api/interview-questions", json=self.VALID_PAYLOAD)
+        response2 = client.post("/api/interview-questions", json=self.VALID_PAYLOAD)
+
+        assert response1.status_code == 200
+        assert response2.status_code == 200
+        # Both calls should go through the generator (no DB caching)
+        assert mock_generator.generate.call_count == 2
+
+
+# ===================================================================
 # CORS Headers
 # ===================================================================
 

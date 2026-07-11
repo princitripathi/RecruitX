@@ -137,3 +137,45 @@ class HealthResponse(BaseModel):
     status: str
     app: str
     version: str
+
+
+class InterviewRequest(BaseModel):
+    """
+    Request body for POST /api/interview-questions.
+
+    Attributes:
+        candidate_id: ID of the candidate.
+        candidate_name: Full name of the candidate.
+        candidate_skills: Comma-separated skills string.
+        candidate_experience_years: Years of work experience.
+        candidate_previous_roles: Previous job roles, semicolon-separated (optional).
+        candidate_education: Education details (optional).
+        job_description: Raw job description text.
+        skill_gap_matched: Skills the candidate matched.
+        skill_gap_missing: Skills the candidate is missing.
+        skill_gap_bonus: Bonus skills the candidate has.
+        explanation: Orchestrator's ranking explanation for this candidate.
+    """
+    candidate_id: int = Field(..., gt=0, description="Candidate ID")
+    candidate_name: str = Field(..., min_length=1, description="Candidate's full name")
+    candidate_skills: str = Field(..., description="Comma-separated skills")
+    candidate_experience_years: float = Field(..., ge=0, description="Years of experience")
+    candidate_previous_roles: Optional[str] = Field(None, description="Previous roles, semicolon-separated")
+    candidate_education: Optional[str] = Field(None, description="Education details")
+    job_description: str = Field(..., min_length=1, description="Raw job description text")
+    skill_gap_matched: List[str] = Field(default_factory=list, description="Matched skills")
+    skill_gap_missing: List[str] = Field(default_factory=list, description="Missing skills")
+    skill_gap_bonus: List[str] = Field(default_factory=list, description="Bonus skills")
+    explanation: str = Field(default="", description="Ranking explanation from orchestrator")
+
+
+class InterviewResponse(BaseModel):
+    """
+    Response body for POST /api/interview-questions.
+
+    Attributes:
+        candidate_id: Echoed candidate ID.
+        questions: List of 5-10 generated interview questions.
+    """
+    candidate_id: int
+    questions: List[str]

@@ -19,7 +19,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from api.models import HealthResponse
-from api.routes import candidates, chat, recruitment, resumes
+from api.routes import candidates, chat, interviews, recruitment, resumes
 
 # Load environment variables before anything else
 load_dotenv()
@@ -71,6 +71,7 @@ app.include_router(recruitment.router)
 app.include_router(candidates.router)
 app.include_router(resumes.router)
 app.include_router(chat.router)
+app.include_router(interviews.router)
 
 
 # ============================================================

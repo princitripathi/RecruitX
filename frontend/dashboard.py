@@ -153,6 +153,10 @@ if "session_id" not in st.session_state:
     st.session_state.session_id = str(uuid.uuid4())
 if "recruit_results" not in st.session_state:
     st.session_state.recruit_results = None
+if "interview_questions" not in st.session_state:
+    st.session_state.interview_questions = {}
+if "last_jd_text" not in st.session_state:
+    st.session_state.last_jd_text = ""
 
 # ============================================================
 # Tab 1: Find Candidates
@@ -221,6 +225,7 @@ def render_find_candidates_tab() -> None:
 
         if result and result.get("success"):
             st.session_state.recruit_results = result
+            st.session_state.last_jd_text = jd_text
             st.balloons()
         elif result and not result.get("success"):
             st.error("Pipeline did not complete successfully. Check server logs.")
@@ -392,16 +397,34 @@ def _display_candidate_card(entry: Dict[str, Any]) -> None:
     # Action buttons row
     action_cols = st.columns(2)
     with action_cols[0]:
-        # Interview questions — stub until Phase 15
-        if st.button(
-            "🎯 Generate Interview Questions",
-            key=f"iq_{entry['candidate_id']}_{entry['rank']}",
-        ):
-            st.info(
-                "Interview question generation will be available in Phase 15. "
-                "It will generate tailored technical and behavioural questions "
-                "based on the candidate's skill gaps and the job requirements."
-            )
+        cid = entry["candidate_id"]
+        iq_key = f"iq_{cid}_{entry['rank']}"
+        if st.button("🎯 Generate Interview Questions", key=iq_key):
+            with st.spinner("🤖 Generating personalized interview questions..."):
+                candidate_detail = api_get(f"/api/candidates/{cid}")
+                if candidate_detail and candidate_detail.get("candidate"):
+                    c = candidate_detail["candidate"]
+                    skill_gap = entry.get("skill_gap", {})
+                    payload = {
+                        "candidate_id": cid,
+                        "candidate_name": c.get("name", ""),
+                        "candidate_skills": c.get("skills", ""),
+                        "candidate_experience_years": c.get("experience_years", 0),
+                        "candidate_previous_roles": c.get("previous_roles"),
+                        "candidate_education": c.get("education"),
+                        "job_description": st.session_state.last_jd_text,
+                        "skill_gap_matched": skill_gap.get("matched", []),
+                        "skill_gap_missing": skill_gap.get("missing", []),
+                        "skill_gap_bonus": skill_gap.get("bonus", []),
+                        "explanation": entry.get("explanation", ""),
+                    }
+                    questions_result = api_post("/api/interview-questions", payload)
+                    if questions_result and "questions" in questions_result:
+                        st.session_state.interview_questions[cid] = questions_result["questions"]
+                    else:
+                        st.error("Failed to generate interview questions. Check server logs.")
+                else:
+                    st.error(f"Could not fetch details for candidate #{cid}.")
 
     with action_cols[1]:
         # Recruiter feedback — disabled until the backend provides shortlist_id
@@ -414,6 +437,15 @@ def _display_candidate_card(entry: Dict[str, Any]) -> None:
                 "This feature will be enabled in a future update."
             ),
         )
+
+    # Display generated interview questions if available
+    cid = entry["candidate_id"]
+    if cid in st.session_state.interview_questions:
+        questions = st.session_state.interview_questions[cid]
+        st.markdown("---")
+        st.markdown("### 🎯 Interview Questions")
+        for i, q in enumerate(questions, 1):
+            st.markdown(f"**{i}.** {q}")
 
 
 # ============================================================
