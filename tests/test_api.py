@@ -420,6 +420,25 @@ class TestResumeUpload:
         assert data["candidate"]["name"] == "Priya Singh"
 
     @patch("api.routes.resumes.ResumeParser")
+    def test_upload_duplicate_email_returns_409(self, mock_parser_class):
+        mock_instance = MagicMock()
+        mock_instance.process_resume.return_value = {
+            "candidate": {"id": 5, "name": "Existing User", "email": "existing@test.com"},
+            "message": "A candidate with email 'existing@test.com' already exists (ID 5).",
+            "is_new": False,
+            "duplicate_reason": "email",
+        }
+        mock_parser_class.return_value = mock_instance
+
+        response = client.post(
+            "/api/upload-resume",
+            files={"file": ("resume.pdf", b"different content same email", "application/pdf")},
+        )
+        assert response.status_code == 409
+        data = response.json()
+        assert "already exists" in data["detail"]
+
+    @patch("api.routes.resumes.ResumeParser")
     def test_upload_duplicate_resume(self, mock_parser_class):
         mock_instance = MagicMock()
         mock_instance.process_resume.return_value = {

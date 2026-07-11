@@ -113,10 +113,14 @@ async def upload_resume(file: UploadFile):
         parser = ResumeParser()
         filename = file.filename or "unknown"
         result = parser.process_resume(save_path, filename)
+        if result.get("duplicate_reason") == "email":
+            raise HTTPException(status_code=409, detail=result["message"])
         return result
     except ValueError as e:
         logger.error("Resume parsing validation error: %s", str(e))
         raise HTTPException(status_code=400, detail=str(e))
+    except HTTPException:
+        raise
     except RuntimeError as e:
         logger.error("Resume parsing runtime error: %s", str(e))
         raise HTTPException(status_code=400, detail=str(e))

@@ -27,7 +27,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 from pydantic import BaseModel, Field
 
-from database.crud import add_candidate, add_resume, get_resume_by_hash, update_candidate
+from database.crud import add_candidate, add_resume, get_candidate_by_email, get_resume_by_hash, update_candidate
 from database.db_setup import get_db_connection
 from embeddings.embedder import CandidateEmbedder
 from embeddings.vector_store import CandidateVectorStore
@@ -156,6 +156,23 @@ class ResumeParser:
 
             # Step 5: Parse with LLM
             profile = self.parse_with_llm(cleaned_text)
+
+            # Step 5b: Check for email duplicate
+            existing = get_candidate_by_email(conn, profile.email)
+            if existing is not None:
+                logger.info(
+                    "Duplicate email detected (%s) — returning existing candidate ID %s",
+                    profile.email, existing["id"],
+                )
+                return {
+                    "candidate": dict(existing),
+                    "message": (
+                        f"A candidate with email '{profile.email}' already "
+                        f"exists (ID {existing['id']})."
+                    ),
+                    "is_new": False,
+                    "duplicate_reason": "email",
+                }
 
             # Step 6: Save candidate and resume record
             result = self.save_candidate(conn, profile, file_path, original_filename, file_hash, cleaned_text)

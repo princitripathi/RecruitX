@@ -592,6 +592,7 @@ class TestProcessResumeIntegration:
         "previous_roles": ["Engineer"],
     })
 
+    @patch("utils.resume_parser.get_candidate_by_email")
     @patch("database.crud.get_candidate_by_id")
     @patch("utils.resume_parser.get_db_connection")
     @patch("utils.resume_parser.get_resume_by_hash")
@@ -610,11 +611,13 @@ class TestProcessResumeIntegration:
         mock_get_resume_by_hash,
         mock_get_db,
         mock_get_candidate,
+        mock_get_candidate_by_email,
     ):
         """Test that a new resume creates a candidate and updates FAISS."""
         mock_conn = MagicMock()
         mock_get_db.return_value = mock_conn
         mock_get_resume_by_hash.return_value = None
+        mock_get_candidate_by_email.return_value = None
         mock_add_candidate.return_value = 42
         mock_add_resume.return_value = 99
         mock_get_candidate.return_value = {
