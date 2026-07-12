@@ -399,7 +399,7 @@ Planned screenshots:
 
 ## License
 
-[MIT](./LICENSE) — Free for academic, personal, and commercial use.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ---
 
@@ -407,16 +407,16 @@ Planned screenshots:
 
 **Princi Tripathi** — B.Tech Computer Science, 4th Year
 
-- GitHub: [Add GitHub URL]
-- LinkedIn: [Add LinkedIn URL]
-- Email: [Add email address]
+- GitHub: https://github.com/princitripathi
+- LinkedIn: https://www.linkedin.com/in/princi-tripathi
+- Email: princitrp@gmail.com
 
 ---
 
 <div align="center">
   <p><strong>RecruitX</strong> demonstrates how modern AI techniques — LLM-powered agents, vector search embeddings, and explainable scoring formulas — can be composed into a practical, deployable recruitment automation system. Built with Python, FastAPI, Streamlit, LangChain, and FAISS.</p>
   <p>
-    <a href="https://github.com/yourusername/RecruitX">GitHub</a> •
+    <a href="https://github.com/princitripathi/RecruitX">GitHub</a> •
     <a href="http://localhost:8000/docs">API Docs</a> •
     <a href="http://localhost:8501">Dashboard</a>
   </p>
