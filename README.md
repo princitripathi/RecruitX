@@ -12,6 +12,8 @@
   </p>
 </div>
 
+<p align="center"><strong>Version:</strong> v1.0.0 – Initial Release</p>
+
 ### Key Highlights
 
 - Multi-Agent AI Platform
@@ -23,6 +25,31 @@
 - Interview Question Generator
 - FastAPI + Streamlit
 - 194 Automated Tests
+
+---
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Why RecruitX?](#why-recuritx)
+- [Features](#features)
+- [Technology Stack](#technology-stack)
+- [Architecture](#architecture)
+- [Project Structure](#project-structure)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [API Overview](#api-overview)
+- [Configuration](#configuration)
+- [Testing](#testing)
+- [Sample Data](#sample-data)
+- [Deployment](#deployment)
+- [Database Schema](#database-schema)
+- [Screenshots](#screenshots)
+- [Troubleshooting](#troubleshooting)
+- [Contributing](#contributing)
+- [Future Improvements](#future-improvements)
+- [License](#license)
+- [Author](#author)
 
 ---
 
@@ -221,6 +248,17 @@ RecruitX/
 
 ---
 
+## Prerequisites
+
+- **Python 3.12+** — Required runtime
+- **Git** — Version control
+- **OpenRouter API Key** — Required for LLM features (sign up at [openrouter.ai](https://openrouter.ai))
+- **Internet connection** — For initial Sentence Transformer model download
+- **RAM** — 4 GB minimum, 8 GB recommended
+- **Disk space** — ~500 MB for dependencies and models
+
+---
+
 ## Installation
 
 > **Full installation instructions are in [INSTALL.md](./INSTALL.md).**
@@ -315,6 +353,16 @@ Key environment variables (set in `.env`):
 | `LLM_MAX_TOKENS` | `2000` | Maximum LLM response length |
 | `DATABASE_PATH` | `data/recruitx.db` | SQLite database file location |
 
+Example `.env` file:
+
+```env
+OPENROUTER_API_KEY=your_api_key_here
+MODEL_NAME=your_model_name
+DATABASE_URL=your_database_url
+```
+
+> **Note:** Free-tier OpenRouter models may have rate limits and slower response times. For production use, consider upgrading to a paid plan.
+
 ---
 
 ## Testing
@@ -393,14 +441,36 @@ The SQLite database contains five tables:
 
 ## Screenshots
 
-*Coming after final UI polish.*
+| | |
+|---|---|
+| ![Dashboard Overview](screenshots/dashboard.png) | ![AI Recruitment Assistant](screenshots/chat.png) |
+| ![Candidate Database](screenshots/database.png) | ![Candidate Search](screenshots/search.png) |
+| ![AI Candidate Ranking](screenshots/ranking.png) | ![Analytics Dashboard](screenshots/analytics.png) |
+| ![Resume Upload](screenshots/upload-resume.png) | |
 
-Planned screenshots:
-- Dashboard overview
-- Resume upload workflow
-- Candidate ranking results
-- AI Recruiter Chat interface
-- Interview question generator
+---
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| **OpenRouter API key missing** | Ensure `OPENROUTER_API_KEY` is set in `.env` or as an environment variable |
+| **Port 8501 already in use** | Run `streamlit run frontend/dashboard.py --server.port 8502` to use a different port |
+| **Backend not running** | Start the API server with `uvicorn api.main:app --reload --port 8000` |
+| **Database connection issues** | Run `python database/db_setup.py` to reinitialize the database |
+| **Missing embeddings** | Run `python embeddings/build_index.py` to rebuild the FAISS vector index |
+| **Sidebar/UI not updating** | Clear your browser cache or press `Ctrl+R` / `Cmd+R` to force Streamlit rerun |
+
+---
+
+## Contributing
+
+Contributions are welcome! To contribute:
+
+1. **Fork** the repository
+2. **Create a feature branch** (`git checkout -b feature/amazing-feature`)
+3. **Commit your changes** (`git commit -m 'Add amazing feature'`)
+4. **Open a Pull Request**
 
 ---
 
