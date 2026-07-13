@@ -44,7 +44,6 @@
 - [Sample Data](#sample-data)
 - [Deployment](#deployment)
 - [Database Schema](#database-schema)
-- [Screenshots](#screenshots)
 - [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
 - [Future Improvements](#future-improvements)
@@ -58,6 +57,10 @@
 RecruitX is a full-stack AI recruitment assistant that automates the end-to-end candidate screening pipeline. Submit a job description — the system analyzes requirements, searches candidates by semantic meaning, scores each profile on skill fit and behavioral signals, and returns a ranked shortlist with transparent score breakdowns — all within seconds.
 
 Powered by five specialized AI agents coordinated through a central orchestrator, RecruitX combines LLM-powered job understanding (OpenRouter), vector similarity search (FAISS + Sentence Transformers), weighted scoring, skill gap analysis, and a rule-based behavioral signal analyzer. The recruiter can interact via a Streamlit dashboard or REST API, using natural language to discover candidates and generate personalized interview questions.
+
+<p align="center">
+  <img src="screenshots/dashboard.png" width="900">
+</p>
 
 ---
 
@@ -86,6 +89,26 @@ Traditional applicant tracking systems rely on keyword matching, missing the con
 - **CSV Export** — Download shortlists for offline review and sharing
 - **Feedback Loop** — Recruiter thumbs-up/thumbs-down feedback stored for future ranking improvements
 - **Duplicate Detection** — MD5 file hashing + email uniqueness to prevent duplicate entries
+
+<p align="center">
+  <img src="screenshots/upload-resume.png" width="900">
+</p>
+
+<p align="center">
+  <img src="screenshots/search.png" width="900">
+</p>
+
+<p align="center">
+  <img src="screenshots/chat.png" width="900">
+</p>
+
+<p align="center">
+  <img src="screenshots/database.png" width="900">
+</p>
+
+<p align="center">
+  <img src="screenshots/analytics.png" width="900">
+</p>
 
 ---
 
@@ -179,6 +202,10 @@ Final Score = (Semantic × 0.50) + (Skill × 0.30) + (Signal × 0.20)
 | **Semantic Score** | 50% | FAISS inner-product similarity on L2-normalized JD & candidate embeddings, normalized to [0, 100] |
 | **Skill Score** | 30% | (Required skills match × 0.70) + (Preferred skills match × 0.30), each as percentage overlap |
 | **Signal Score** | 20% | (Profile completeness × 0.40) + (Recency × 0.40) + (Experience match × 0.20) |
+
+<p align="center">
+  <img src="screenshots/ranking.png" width="900">
+</p>
 
 ---
 
@@ -437,16 +464,6 @@ The SQLite database contains five tables:
 - **CI/CD Pipeline** — Automated testing and deployment with GitHub Actions
 - **Docker Support** — Containerized deployment for any cloud provider
 
----
-
-## Screenshots
-
-| | |
-|---|---|
-| ![Dashboard Overview](screenshots/dashboard.png) | ![AI Recruitment Assistant](screenshots/chat.png) |
-| ![Candidate Database](screenshots/database.png) | ![Candidate Search](screenshots/search.png) |
-| ![AI Candidate Ranking](screenshots/ranking.png) | ![Analytics Dashboard](screenshots/analytics.png) |
-| ![Resume Upload](screenshots/upload-resume.png) | |
 
 ---
 
