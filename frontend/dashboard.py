@@ -258,6 +258,27 @@ def inject_theme() -> None:
         background: linear-gradient(135deg, rgba(59,130,246,0.02) 0%, var(--bg-card) 100%) !important;
     }
 
+    .compact-card {
+        background: var(--bg-card) !important;
+        border: 1px solid var(--border) !important;
+        border-radius: 10px !important;
+        padding: 0.85rem !important;
+        transition: var(--transition) !important;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.15) !important;
+        height: 100%;
+    }
+    .compact-card:hover {
+        border-color: rgba(59,130,246,0.2) !important;
+    }
+    .compact-card.top-match {
+        border-color: rgba(59,130,246,0.3) !important;
+        background: linear-gradient(135deg, rgba(59,130,246,0.02) 0%, var(--bg-card) 100%) !important;
+    }
+    .expanded-details {
+        margin-top: 0.5rem;
+        animation: fadeIn 0.2s ease;
+    }
+
     /* ── Tabs ── */
     .stTabs [data-baseweb="tab-list"] {
         background: transparent !important;
@@ -348,30 +369,47 @@ def inject_theme() -> None:
         box-shadow: none !important;
     }
     .stButton > button[kind="primary"],
-    .stButton > button[kind="primaryFormSubmit"] {
+    .stButton > button[kind="primaryFormSubmit"],
+    div[data-testid="stFormSubmitButton"] > button {
         background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%) !important;
         color: white !important;
         border: none !important;
         font-weight: 600 !important;
-        box-shadow: 0 2px 8px rgba(59,130,246,0.25) !important;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.15) !important;
     }
     .stButton > button[kind="primary"]:hover,
-    .stButton > button[kind="primaryFormSubmit"]:hover {
+    .stButton > button[kind="primaryFormSubmit"]:hover,
+    div[data-testid="stFormSubmitButton"] > button:hover {
         background: linear-gradient(135deg, var(--accent-hover) 0%, #1D4ED8 100%) !important;
         border: none !important;
         filter: brightness(1.05);
     }
     .stButton > button[kind="primary"]:active,
-    .stButton > button[kind="primaryFormSubmit"]:active {
+    .stButton > button[kind="primaryFormSubmit"]:active,
+    div[data-testid="stFormSubmitButton"] > button:active {
         filter: brightness(0.95) !important;
     }
     .stButton > button[kind="primary"]:disabled,
-    .stButton > button[kind="primaryFormSubmit"]:disabled {
+    .stButton > button[kind="primaryFormSubmit"]:disabled,
+    div[data-testid="stFormSubmitButton"] > button:disabled {
         background: linear-gradient(135deg, #334155 0%, #475569 100%) !important;
         color: var(--text-muted) !important;
         box-shadow: none !important;
         opacity: 0.6 !important;
     }
+
+    /* ── Add Candidate button (purple/indigo accent) ── */
+    div[data-testid="stFormSubmitButton"] > button {
+        background: linear-gradient(135deg, #6366F1, #8B5CF6) !important;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.15) !important;
+        transition: all 0.2s ease !important;
+    }
+    div[data-testid="stFormSubmitButton"] > button:hover {
+        background: linear-gradient(135deg, #4F46E5, #7C3AED) !important;
+        filter: brightness(1) !important;
+        transform: translateY(-1px);
+    }
+
     .stDownloadButton > button {
         border-radius: var(--radius-sm) !important;
         padding: 0.55rem 1.35rem !important;
@@ -772,6 +810,31 @@ def inject_theme() -> None:
         animation: logoEntrance 0.4s ease-out forwards;
         animation-delay: 0.1s;
         opacity: 0;
+    }
+
+    /* ── Typing indicator for chat ── */
+    .typing-dots span {
+        display: inline-block;
+        animation: typingDot 1.4s infinite both;
+        font-size: 1.3rem;
+        line-height: 1;
+        color: #94A3B8;
+    }
+    .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typingDot {
+        0% { opacity: 0.2; }
+        20% { opacity: 1; }
+        100% { opacity: 0.2; }
+    }
+    /* Chat input styling — match JD textarea blue accent */
+    [data-testid="stChatInput"] {
+        border: 1px solid var(--border) !important;
+        border-radius: var(--radius-sm) !important;
+    }
+    [data-testid="stChatInput"]:focus-within {
+        border-color: var(--accent) !important;
+        box-shadow: 0 0 0 2px var(--accent-glow) !important;
     }
 
     /* ── Skeleton loading ── */
@@ -1291,13 +1354,13 @@ health = api_get("/api/health")
 
 with st.sidebar:
     st.markdown(
-        f'<div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.25rem;">'
-        f'<div class="sidebar-logo-anim" style="width:40px;height:40px;border-radius:12px;'
+        f'<div style="display:flex;align-items:flex-start;gap:1rem;margin-bottom:0.25rem;">'
+        f'<div class="sidebar-logo-anim" style="width:48px;height:48px;border-radius:12px;'
         f'background:linear-gradient(135deg, #3B82F6, #2563EB);'
         f'display:flex;align-items:center;justify-content:center;'
-        f'font-size:1.25rem;box-shadow:0 0 20px rgba(59,130,246,0.2);">🔄</div>'
+        f'font-size:1.5rem;box-shadow:0 0 20px rgba(59,130,246,0.2);">🔄</div>'
         f'<div class="sidebar-title-anim">'
-        f'<h2 style="margin:0;font-size:1.15rem !important;letter-spacing:-0.03em;'
+        f'<h2 style="margin:0;font-size:1.5rem !important;letter-spacing:-0.03em;'
         f'color:#F1F5F9 !important;">{APP_NAME}</h2>'
         f'<p style="margin:0;font-size:0.65rem;color:#64748B;font-weight:500;'
         f'letter-spacing:0.02em;">AI Recruitment Platform</p>'
@@ -1434,6 +1497,7 @@ def render_find_candidates_tab() -> None:
         )
         run_clicked = st.button(
             "🔍  Find Best Candidates",
+            key="find_candidates",
             type="primary",
             use_container_width=True,
             disabled=not jd_text.strip(),
@@ -1567,189 +1631,240 @@ def _display_recruit_results(result: Dict[str, Any]) -> None:
         detail = api_get(f"/api/candidates/{cid}")
         candidate_details[cid] = detail
 
-    for entry in shortlist:
-        is_top = entry["rank"] == 1
-        cid = entry["candidate_id"]
-        detail = candidate_details.get(cid)
+    if "expanded_cards" not in st.session_state:
+        st.session_state.expanded_cards = set()
 
-        c_name = f"Candidate #{cid}"
-        c_exp = ""
-        c_loc = ""
-        if detail and detail.get("candidate"):
-            c = detail["candidate"]
-            c_name = c.get("name", c_name)
-            c_exp = c.get("experience_years", "")
-            c_loc = c.get("location", "")
+    # Render candidates in a 2-column grid
+    num_candidates = len(shortlist)
+    for i in range(0, num_candidates, 2):
+        cols = st.columns(2)
+        for j in range(2):
+            idx = i + j
+            if idx >= num_candidates:
+                break
+            entry = shortlist[idx]
+            is_top = entry["rank"] == 1
+            cid = entry["candidate_id"]
+            detail = candidate_details.get(cid)
 
-        skill_gap = entry.get("skill_gap", {})
-        matched = skill_gap.get("matched", [])
-        missing = skill_gap.get("missing", [])
-        bonus = skill_gap.get("bonus", [])
+            c_name = f"Candidate #{cid}"
+            c_exp = ""
+            c_loc = ""
+            if detail and detail.get("candidate"):
+                c = detail["candidate"]
+                c_name = c.get("name", c_name)
+                c_exp = c.get("experience_years", "")
+                c_loc = c.get("location", "")
 
-        final_score = entry['final_score']
-        bar_color = "#22C55E" if final_score >= 80 else "#F59E0B" if final_score >= 60 else "#3B82F6"
+            skill_gap = entry.get("skill_gap", {})
+            matched = skill_gap.get("matched", [])
+            missing = skill_gap.get("missing", [])
+            bonus = skill_gap.get("bonus", [])
 
-        top_badge = ""
-        if is_top:
-            top_badge = (
-                '<div style="margin-bottom:0.75rem;">'
-                '<span style="background:rgba(59,130,246,0.08);'
-                'color:#60A5FA;border:1px solid rgba(59,130,246,0.2);border-radius:6px;'
-                'padding:3px 10px;font-size:0.68rem;font-weight:600;'
-                'text-transform:uppercase;letter-spacing:0.05em;'
-                'display:inline-flex;align-items:center;gap:4px;">'
-                 '<span style="font-size:0.75rem;">🏆</span> Top Match</span></div>'
-            )
+            final_score = entry['final_score']
+            bar_color = "#22C55E" if final_score >= 80 else "#F59E0B" if final_score >= 60 else "#3B82F6"
 
-        skill_html_pills = ""
-        if matched or missing or bonus:
-            skill_html_pills = (
-                '<div style="background:rgba(11,17,32,0.3);border:1px solid rgba(30,41,59,0.3);'
-                'border-radius:10px;padding:0.75rem 1rem;margin-top:0.75rem;">'
-            )
-            if matched:
-                skill_html_pills += (
-                    '<div style="margin-bottom:0.35rem;">'
-                    '<p style="margin:0 0 0.25rem;font-size:0.65rem;color:#4ADE80;font-weight:600;'
-                    'text-transform:uppercase;letter-spacing:0.05em;display:flex;align-items:center;gap:4px;">'
-                    '<span>✓</span> Matched</p>'
-                    '<div style="display:flex;flex-wrap:wrap;gap:2px;">'
+            explanation = entry.get("explanation", "")
+            explanation_short = explanation
+            if len(explanation) > 120:
+                explanation_short = explanation[:117] + "..."
+
+            with cols[j]:
+                card_class = "compact-card" + (" top-match" if is_top else "")
+
+                top_badge = ""
+                if is_top:
+                    top_badge = (
+                        '<div style="margin-bottom:0.5rem;">'
+                        '<span style="background:rgba(59,130,246,0.08);'
+                        'color:#60A5FA;border:1px solid rgba(59,130,246,0.2);border-radius:6px;'
+                        'padding:2px 8px;font-size:0.62rem;font-weight:600;'
+                        'text-transform:uppercase;letter-spacing:0.05em;'
+                        'display:inline-flex;align-items:center;gap:4px;">'
+                         '<span style="font-size:0.65rem;">🏆</span> Top Match</span></div>'
+                    )
+
+                card_html = f'<div class="{card_class}">'
+                card_html += top_badge
+                card_html += (
+                    f'<div style="display:flex;align-items:center;gap:0.75rem;">'
+                    f'{candidate_avatar(c_name, entry["rank"], size=36)}'
+                    f'<div style="flex:1;min-width:0;">'
+                    f'<h4 style="margin:0;font-size:0.9rem;color:#F1F5F9;font-weight:600;">{c_name}</h4>'
+                    f'<div style="display:flex;gap:0.5rem;margin-top:0.1rem;flex-wrap:wrap;">'
+                    + (f'<span style="color:#64748B;font-size:0.7rem;display:flex;align-items:center;gap:3px;">📌 {c_loc}</span>' if c_loc else '')
+                    + (f'<span style="color:#64748B;font-size:0.7rem;display:flex;align-items:center;gap:3px;">💼 {c_exp}y exp</span>' if c_exp else '')
+                    + f'</div></div>'
+                    f'<div style="text-align:right;flex-shrink:0;">'
+                    f'<span style="font-size:1.35rem;font-weight:700;'
+                    f'color:{bar_color};'
+                    f'letter-spacing:-0.03em;">{final_score:.1f}</span>'
+                    f'<p style="margin:0;font-size:0.55rem;color:#64748B;font-weight:600;'
+                    f'text-transform:uppercase;letter-spacing:0.04em;">Score</p>'
+                    f'</div></div>'
                 )
-                for s in matched:
-                    skill_html_pills += skill_badge(s, "matched")
-                skill_html_pills += '</div></div>'
-            if missing:
-                skill_html_pills += (
-                    '<div style="margin-bottom:0.35rem;">'
-                    '<p style="margin:0 0 0.25rem;font-size:0.65rem;color:#F59E0B;font-weight:600;'
-                    'text-transform:uppercase;letter-spacing:0.05em;display:flex;align-items:center;gap:4px;">'
-                    '<span>✕</span> Missing</p>'
-                    '<div style="display:flex;flex-wrap:wrap;gap:2px;">'
-                )
-                for s in missing:
-                    skill_html_pills += skill_badge(s, "missing")
-                skill_html_pills += '</div></div>'
-            if bonus:
-                skill_html_pills += (
-                    '<div>'
-                    '<p style="margin:0 0 0.25rem;font-size:0.65rem;color:#60A5FA;font-weight:600;'
-                    'text-transform:uppercase;letter-spacing:0.05em;display:flex;align-items:center;gap:4px;">'
-                    '<span>+</span> Bonus</p>'
-                    '<div style="display:flex;flex-wrap:wrap;gap:2px;">'
-                )
-                for s in bonus:
-                    skill_html_pills += skill_badge(s, "bonus")
-                skill_html_pills += '</div></div>'
-            skill_html_pills += '</div>'
+                card_html += '<div style="margin:0.5rem 0;">'
+                card_html += score_progress_bar(final_score, 100, bar_color, "Overall")
+                card_html += score_progress_bar(entry["semantic_score"], 100, "#3B82F6", "Semantic")
+                card_html += score_progress_bar(entry["skill_score"], 100, "#7C3AED", "Skill")
+                card_html += score_progress_bar(entry["signal_score"], 100, "#06B6D4", "Signal")
+                card_html += '</div>'
 
-        explanation = entry.get("explanation", "")
-        card_expanded_id = f"card_{cid}_{entry['rank']}"
-        card_class = "candidate-card top-match" if is_top else "candidate-card"
+                card_html += '<div style="margin:0.35rem 0;">'
+                if matched:
+                    shown = matched[:3]
+                    remaining = len(matched) - 3
+                    for s in shown:
+                        card_html += skill_badge(s, "matched")
+                    if remaining > 0:
+                        card_html += (
+                            f'<span style="display:inline-flex;align-items:center;gap:5px;'
+                            f'background:rgba(30,41,59,0.5);color:#94A3B8;'
+                            f'border:1px solid rgba(30,41,59,0.5);border-radius:9999px;'
+                            f'padding:3px 10px;font-size:0.72rem;font-weight:500;'
+                            f'margin:2px 4px 2px 0;">+{remaining} more</span>'
+                        )
+                card_html += '</div>'
 
-        st.markdown(
-            f'<div class="{card_class}" '    
-            f'id="{card_expanded_id}">'
-            f'{top_badge}'
-            f'<div style="display:flex;align-items:center;gap:1rem;">'
-            f'{candidate_avatar(c_name, entry["rank"], size=48)}'
-            f'<div style="flex:1;min-width:0;">'
-            f'<h3 style="margin:0;font-size:1rem;color:#F1F5F9;">{c_name}</h3>'
-            f'<div style="display:flex;gap:0.75rem;margin-top:0.2rem;flex-wrap:wrap;">'
-            + (f'<span style="color:#64748B;font-size:0.78rem;display:flex;align-items:center;gap:4px;">'
-               f'📍 {c_loc}</span>' if c_loc else '')
-            + (f'<span style="color:#64748B;font-size:0.78rem;display:flex;align-items:center;gap:4px;">'
-               f'💼 {c_exp}y exp</span>' if c_exp else '')
-            + (f'<span style="color:#64748B;font-size:0.78rem;display:flex;align-items:center;gap:4px;">'
-               f'#{entry["rank"]}</span>' if not is_top else '')
-            + f'</div></div>'
-            f'<div style="text-align:right;">'
-            f'<span style="font-size:1.75rem;font-weight:700;'
-            f'color:{bar_color};'
-            f'letter-spacing:-0.03em;">{final_score:.1f}</span>'
-            f'<p style="margin:0;font-size:0.65rem;color:#64748B;font-weight:600;'
-            f'text-transform:uppercase;letter-spacing:0.04em;">Score</p>'
-            f'</div></div>'
-            f'<div style="margin:0.75rem 0;">'
-            + score_progress_bar(final_score, 100, bar_color, "Overall")
-            + score_progress_bar(entry["semantic_score"], 100, "#3B82F6", "Semantic")
-            + score_progress_bar(entry["skill_score"], 100, "#7C3AED", "Skill")
-            + score_progress_bar(entry["signal_score"], 100, "#06B6D4", "Signal")
-            + f'</div>'
-            + (skill_html_pills if matched or missing or bonus else '')
-            + (f'<div style="background:rgba(59,130,246,0.03);border:1px solid rgba(30,41,59,0.5);'
-                f'border-radius:10px;padding:0.85rem 1rem;margin:0.75rem 0;">'
-                f'<div style="display:flex;align-items:flex-start;gap:0.6rem;">'
-                f'<span style="font-size:0.85rem;flex-shrink:0;margin-top:1px;">💡</span>'
-                f'<div>'
-                f'<p style="color:#64748B;margin:0 0 0.15rem;font-size:0.68rem;font-weight:600;'
-                f'text-transform:uppercase;letter-spacing:0.05em;">AI Analysis</p>'
-                f'<p style="color:#CBD5E1;margin:0;font-size:0.85rem;line-height:1.6;">'
-                f'{explanation}</p></div></div></div>' if explanation else '')
-            + f'</div>',
-            unsafe_allow_html=True,
-        )
+                if explanation:
+                    card_html += (
+                        f'<div style="background:rgba(59,130,246,0.03);border:1px solid rgba(30,41,59,0.4);'
+                        f'border-radius:8px;padding:0.5rem 0.65rem;margin:0.4rem 0;">'
+                        f'<p style="color:#94A3B8;margin:0;font-size:0.72rem;line-height:1.4;'
+                        f'overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'
+                        f'💡 {explanation_short}</p></div>'
+                    )
 
-        # Action buttons and interview questions below each card
-        action_cols = st.columns([1, 1, 2])
-        with action_cols[0]:
-            iq_key = f"iq_{cid}_{entry['rank']}"
-            if st.button("🎤  Interview Questions", key=iq_key, use_container_width=True):
-                with st.spinner("Generating personalized interview questions..."):
-                    candidate_detail = api_get(f"/api/candidates/{cid}")
-                    if candidate_detail and candidate_detail.get("candidate"):
-                        c = candidate_detail["candidate"]
-                        payload = {
-                            "candidate_id": cid,
-                            "candidate_name": c.get("name", ""),
-                            "candidate_skills": c.get("skills", ""),
-                            "candidate_experience_years": c.get("experience_years", 0),
-                            "candidate_previous_roles": c.get("previous_roles"),
-                            "candidate_education": c.get("education"),
-                            "job_description": st.session_state.last_jd_text,
-                            "skill_gap_matched": skill_gap.get("matched", []),
-                            "skill_gap_missing": skill_gap.get("missing", []),
-                            "skill_gap_bonus": skill_gap.get("bonus", []),
-                            "explanation": entry.get("explanation", ""),
-                        }
-                        questions_result = api_post("/api/interview-questions", payload)
-                        if questions_result and "questions" in questions_result:
-                            st.session_state.interview_questions[cid] = questions_result["questions"]
-                        else:
-                            st.error("Failed to generate interview questions.")
+                card_html += '</div>'
+
+                st.markdown(card_html, unsafe_allow_html=True)
+
+                is_expanded = cid in st.session_state.expanded_cards
+                btn_label = "▲  View Details" if is_expanded else "▼  View Details"
+                if st.button(btn_label, key=f"vd_{cid}_{entry['rank']}", use_container_width=True):
+                    if cid in st.session_state.expanded_cards:
+                        st.session_state.expanded_cards.discard(cid)
                     else:
-                        st.error(f"Could not fetch details for candidate #{cid}.")
+                        st.session_state.expanded_cards.add(cid)
+                    st.rerun()
 
-        with action_cols[1]:
-            st.button(
-                "📝  Feedback",
-                disabled=True,
-                key=f"fb_{cid}_{entry['rank']}",
-                use_container_width=True,
-                help="Feedback will be enabled in a future update.",
-            )
+                if is_expanded:
+                    details_html = '<div class="expanded-details">'
+                    all_skills_html = ""
+                    if matched or missing or bonus:
+                        all_skills_html = (
+                            '<div style="background:rgba(11,17,32,0.3);border:1px solid rgba(30,41,59,0.3);'
+                            'border-radius:10px;padding:0.65rem 0.85rem;margin-top:0.5rem;">'
+                        )
+                        if matched:
+                            all_skills_html += (
+                                '<div style="margin-bottom:0.25rem;">'
+                                '<p style="margin:0 0 0.2rem;font-size:0.6rem;color:#4ADE80;font-weight:600;'
+                                'text-transform:uppercase;letter-spacing:0.05em;display:flex;align-items:center;gap:4px;">'
+                                '<span>✓</span> Matched</p>'
+                                '<div style="display:flex;flex-wrap:wrap;gap:2px;">'
+                            )
+                            for s in matched:
+                                all_skills_html += skill_badge(s, "matched")
+                            all_skills_html += '</div></div>'
+                        if missing:
+                            all_skills_html += (
+                                '<div style="margin-bottom:0.25rem;">'
+                                '<p style="margin:0 0 0.2rem;font-size:0.6rem;color:#F59E0B;font-weight:600;'
+                                'text-transform:uppercase;letter-spacing:0.05em;display:flex;align-items:center;gap:4px;">'
+                                '<span>✕</span> Missing</p>'
+                                '<div style="display:flex;flex-wrap:wrap;gap:2px;">'
+                            )
+                            for s in missing:
+                                all_skills_html += skill_badge(s, "missing")
+                            all_skills_html += '</div></div>'
+                        if bonus:
+                            all_skills_html += (
+                                '<div>'
+                                '<p style="margin:0 0 0.2rem;font-size:0.6rem;color:#60A5FA;font-weight:600;'
+                                'text-transform:uppercase;letter-spacing:0.05em;display:flex;align-items:center;gap:4px;">'
+                                '<span>+</span> Bonus</p>'
+                                '<div style="display:flex;flex-wrap:wrap;gap:2px;">'
+                            )
+                            for s in bonus:
+                                all_skills_html += skill_badge(s, "bonus")
+                            all_skills_html += '</div></div>'
+                        all_skills_html += '</div>'
+                    details_html += all_skills_html
 
-        with action_cols[2]:
-            pass
+                    if explanation and len(explanation) > 120:
+                        details_html += (
+                            f'<div style="background:rgba(59,130,246,0.03);border:1px solid rgba(30,41,59,0.5);'
+                            f'border-radius:10px;padding:0.75rem 0.85rem;margin:0.5rem 0;">'
+                            f'<div style="display:flex;align-items:flex-start;gap:0.6rem;">'
+                            f'<span style="font-size:0.8rem;flex-shrink:0;margin-top:1px;">💡</span>'
+                            f'<div>'
+                            f'<p style="color:#64748B;margin:0 0 0.15rem;font-size:0.62rem;font-weight:600;'
+                            f'text-transform:uppercase;letter-spacing:0.05em;">AI Analysis</p>'
+                            f'<p style="color:#CBD5E1;margin:0;font-size:0.8rem;line-height:1.6;">'
+                            f'{explanation}</p></div></div></div>'
+                        )
 
-        # ── Display Generated Interview Questions ──
-        if cid in st.session_state.interview_questions:
-            questions = st.session_state.interview_questions[cid]
-            st.markdown('<hr style="margin:1rem 0;" />', unsafe_allow_html=True)
-            st.markdown(
-                '<div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:1rem;">'
-                '<span style="font-size:1.1rem;">🎤</span>'
-                '<h3 style="margin:0;">Interview Questions</h3>'
-                '<span style="background:rgba(59,130,246,0.1);color:#60A5FA;'
-                'border-radius:9999px;padding:2px 10px;font-size:0.72rem;'
-                f'font-weight:600;">{len(questions)} questions</span></div>',
-                unsafe_allow_html=True,
-            )
-            for i, q in enumerate(questions, 1):
-                q_type = ["technical", "behavioral", "experience"][i % 3]
-                st.markdown(
-                    question_card(q, q_type=q_type, index=i),
-                    unsafe_allow_html=True,
-                )
+                    details_html += '</div>'
+                    st.markdown(details_html, unsafe_allow_html=True)
+
+                act_cols = st.columns([1, 1])
+                with act_cols[0]:
+                    iq_key = f"iq_{cid}_{entry['rank']}"
+                    if st.button("🎤  Interview Qs", key=iq_key, use_container_width=True):
+                        with st.spinner("Generating personalized interview questions..."):
+                            candidate_detail = api_get(f"/api/candidates/{cid}")
+                            if candidate_detail and candidate_detail.get("candidate"):
+                                c = candidate_detail["candidate"]
+                                payload = {
+                                    "candidate_id": cid,
+                                    "candidate_name": c.get("name", ""),
+                                    "candidate_skills": c.get("skills", ""),
+                                    "candidate_experience_years": c.get("experience_years", 0),
+                                    "candidate_previous_roles": c.get("previous_roles"),
+                                    "candidate_education": c.get("education"),
+                                    "job_description": st.session_state.last_jd_text,
+                                    "skill_gap_matched": skill_gap.get("matched", []),
+                                    "skill_gap_missing": skill_gap.get("missing", []),
+                                    "skill_gap_bonus": skill_gap.get("bonus", []),
+                                    "explanation": entry.get("explanation", ""),
+                                }
+                                questions_result = api_post("/api/interview-questions", payload)
+                                if questions_result and "questions" in questions_result:
+                                    st.session_state.interview_questions[cid] = questions_result["questions"]
+                                else:
+                                    st.error("Failed to generate interview questions.")
+                            else:
+                                st.error(f"Could not fetch details for candidate #{cid}.")
+
+                with act_cols[1]:
+                    st.button(
+                        "📝  Feedback",
+                        disabled=True,
+                        key=f"fb_{cid}_{entry['rank']}",
+                        use_container_width=True,
+                        help="Feedback will be enabled in a future update.",
+                    )
+
+                if cid in st.session_state.interview_questions:
+                    questions = st.session_state.interview_questions[cid]
+                    st.markdown(
+                        '<div style="margin-top:0.75rem;padding:0.65rem;background:rgba(11,17,32,0.3);'
+                        'border:1px solid rgba(30,41,59,0.3);border-radius:10px;">'
+                        '<div style="display:flex;align-items:center;gap:0.4rem;margin-bottom:0.65rem;">'
+                        '<span style="font-size:0.9rem;">🎤</span>'
+                        '<h4 style="margin:0;font-size:0.8rem;">Interview Questions</h4>'
+                        '<span style="background:rgba(59,130,246,0.1);color:#60A5FA;'
+                        'border-radius:9999px;padding:1px 8px;font-size:0.65rem;'
+                        f'font-weight:600;">{len(questions)}</span></div>',
+                        unsafe_allow_html=True,
+                    )
+                    for qi, q in enumerate(questions, 1):
+                        q_type = ["technical", "behavioral", "experience"][qi % 3]
+                        st.markdown(
+                            question_card(q, q_type=q_type, index=qi),
+                            unsafe_allow_html=True,
+                        )
 
 
 def _display_score_chart(shortlist: List[Dict[str, Any]]) -> None:
@@ -1841,18 +1956,9 @@ def render_chat_tab() -> None:
         unsafe_allow_html=True,
     )
 
-    # ── Chat history container ──
-    if not st.session_state.chat_history:
-        st.markdown(
-            empty_state(
-                "💬",
-                "Start a Conversation",
-                "Ask about candidates, search for specific skills, get recruitment insights, or explore your talent pipeline.",
-                'Try: "Show me Python developers with 5+ years of experience"'
-            ),
-            unsafe_allow_html=True,
-        )
+    chat_loading = st.session_state.get("chat_loading", False)
 
+    # ── Chat history container ──
     chat_container = st.container()
     with chat_container:
         for msg in st.session_state.chat_history:
@@ -1862,7 +1968,6 @@ def render_chat_tab() -> None:
             ts = msg.get("timestamp", "")
             ts_html = f'<span style="font-size:0.65rem;color:#475569;margin-top:4px;">{ts}</span>' if ts else ""
 
-            bubble_align = "flex-end" if is_user else "flex-start"
             bubble_bg = "linear-gradient(135deg, rgba(59,130,246,0.1) 0%, rgba(59,130,246,0.04) 100%)" if is_user else "var(--bg-card)"
             bubble_border = "1px solid rgba(59,130,246,0.2)" if is_user else "1px solid var(--border-light)"
 
@@ -1887,24 +1992,28 @@ def render_chat_tab() -> None:
                 unsafe_allow_html=True,
             )
 
-    # Chat input
-    with st.form(key="chat_form", clear_on_submit=True):
-        chat_col1, chat_col2 = st.columns([5, 1])
-        with chat_col1:
-            msg_text = st.text_input(
-                "Message",
-                label_visibility="collapsed",
-                placeholder="Ask about candidates, search for skills, or get recruitment insights..."
-            )
-        with chat_col2:
-            send = st.form_submit_button("Send", use_container_width=True)
+    # Inline typing indicator shown during API call
+    if chat_loading:
+        st.markdown(
+            f'<div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem;">'
+            f'<div style="width:34px;height:34px;border-radius:10px;flex-shrink:0;'
+            f'background:linear-gradient(135deg, #22C55E, #16A34A);'
+            f'display:flex;align-items:center;justify-content:center;'
+            f'font-size:0.85rem;box-shadow:0 2px 6px rgba(34,197,94,0.3);">🤖</div>'
+            f'<div style="color:#94A3B8;font-size:0.875rem;">RecruitX is thinking'
+            f'<span class="typing-dots" style="display:inline-flex;gap:2px;margin-left:2px;">'
+            f'<span>.</span><span>.</span><span>.</span></span></div></div>',
+            unsafe_allow_html=True,
+        )
 
-    st.caption("Press Enter to send")
-
-    prompt = msg_text if send and msg_text else None
+    # Chat input (disabled while loading — prevents dim overlay)
+    prompt = st.chat_input(
+        "Ask about candidates, search for skills, or get recruitment insights...",
+        disabled=chat_loading,
+    )
 
     if prompt:
-        from datetime import datetime
+        st.session_state.chat_loading = True
         now = datetime.now().strftime("%I:%M %p")
 
         st.session_state.chat_history.append({
@@ -1913,7 +2022,7 @@ def render_chat_tab() -> None:
             "timestamp": now,
         })
 
-        # Show user message immediately
+        # Show user message inline (history loop already passed)
         st.markdown(
             f'<div style="display:flex;align-items:flex-start;gap:0.75rem;margin-bottom:1rem;'
             f'flex-direction:row-reverse;">'
@@ -1933,43 +2042,36 @@ def render_chat_tab() -> None:
             unsafe_allow_html=True,
         )
 
-        # Show assistant with typing animation placeholder
-        msg_placeholder = st.empty()
-        with st.chat_message("assistant", avatar="🤖"):
-            with st.spinner("Thinking..."):
-                result = api_post("/api/chat", {
-                    "message": prompt,
-                    "session_id": st.session_state.session_id,
-                })
-            if result:
-                response_text = result.get("response", "No response.")
-            else:
-                response_text = "Sorry, I could not process your request. Please try again."
-
-        # Display assistant response with ChatGPT-style formatting
-        now = datetime.now().strftime("%I:%M %p")
+        # Inline typing indicator (no dim overlay, no spinner, no full-page loading)
         st.markdown(
-            f'<div style="display:flex;align-items:flex-start;gap:0.75rem;margin-bottom:1rem;">'
+            f'<div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem;">'
             f'<div style="width:34px;height:34px;border-radius:10px;flex-shrink:0;'
             f'background:linear-gradient(135deg, #22C55E, #16A34A);'
             f'display:flex;align-items:center;justify-content:center;'
             f'font-size:0.85rem;box-shadow:0 2px 6px rgba(34,197,94,0.3);">🤖</div>'
-            f'<div style="max-width:75%;">'
-            f'<div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:4px;">'
-            f'<span style="font-size:0.72rem;font-weight:600;color:#64748B;">RecruitX</span>'
-            f'<span style="font-size:0.65rem;color:#475569;">{now}</span></div>'
-            f'<div style="background:var(--bg-card);border:1px solid var(--border-light);'
-            f'border-radius:16px 16px 16px 4px;padding:0.85rem 1.1rem;">'
-            f'<div style="color:#CBD5E1;font-size:0.875rem;line-height:1.65;">{response_text}</div>'
-            f'</div></div></div>',
+            f'<div style="color:#94A3B8;font-size:0.875rem;">RecruitX is thinking'
+            f'<span class="typing-dots" style="display:inline-flex;gap:2px;margin-left:2px;">'
+            f'<span>.</span><span>.</span><span>.</span></span></div></div>',
             unsafe_allow_html=True,
         )
+
+        result = api_post("/api/chat", {
+            "message": prompt,
+            "session_id": st.session_state.session_id,
+        })
+        if result:
+            response_text = result.get("response", "No response.")
+        else:
+            response_text = "Sorry, I could not process your request. Please try again."
+
+        now = datetime.now().strftime("%I:%M %p")
 
         st.session_state.chat_history.append({
             "role": "assistant",
             "content": response_text,
             "timestamp": now,
         })
+        st.session_state.chat_loading = False
         st.rerun()
 
     # Clear chat button
@@ -1977,7 +2079,7 @@ def render_chat_tab() -> None:
         st.markdown('<hr style="margin:1rem 0;" />', unsafe_allow_html=True)
         c1, c2, c3 = st.columns([3, 2, 3])
         with c2:
-            if st.button("🗑️  Clear Chat", use_container_width=True):
+            if st.button("🗑️  Clear Chat", key="clear_chat", use_container_width=True):
                 st.session_state.chat_history = []
                 st.session_state.session_id = str(uuid.uuid4())
                 st.rerun()
@@ -2301,6 +2403,7 @@ def _render_upload_resume() -> None:
 
         upload_clicked = st.button(
             "Upload Resume",
+            key="upload_resume",
             type="primary",
             use_container_width=True,
         )
