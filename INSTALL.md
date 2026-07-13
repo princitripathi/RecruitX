@@ -285,7 +285,6 @@ Here is every variable available:
 | `EMBEDDING_BATCH_SIZE` | No | `32` | Embedding batch size |
 | `EMBEDDING_DEVICE` | No | `cpu` | Embedding compute device |
 | `LOG_LEVEL` | No | `INFO` | Logging level (DEBUG, INFO, WARNING, ERROR) |
-| `LOG_FILE` | No | `logs/recruitx.log` | Log file path |
 | `LOG_FORMAT` | No | `%(asctime)s - %(name)s - ...` | Log message format |
 | `DEBUG` | No | `true` | Debug mode |
 

@@ -4,7 +4,7 @@
 
 ## Overview
 
-RecruitX exposes a RESTful JSON API with 8 endpoints across 5 route modules. The API is the backend for the Streamlit dashboard and can also be called directly by external tools (cURL, Python, Postman).
+RecruitX exposes a RESTful JSON API with 10 endpoints across 5 route modules. The API is the backend for the Streamlit dashboard and can also be called directly by external tools (cURL, Python, Postman).
 
 - **OpenAPI docs (Swagger UI):** [`/docs`](http://localhost:8000/docs)
 - **ReDoc:** [`/redoc`](http://localhost:8000/redoc)

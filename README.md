@@ -67,7 +67,7 @@ Traditional applicant tracking systems rely on keyword matching, missing the con
 | Layer | Technology | Role |
 |-------|-----------|------|
 | **Language** | Python 3.12 | Core runtime |
-| **LLM Provider** | OpenRouter (Nemotron-3 / Mistral-7B Free) | JD analysis, resume parsing, chat, question generation |
+| **LLM Provider** | OpenRouter (nvidia/nemotron-3-ultra-550b-a55b:free / mistralai/mistral-7b-instruct:free) | JD analysis, resume parsing, chat, question generation |
 | **LLM Framework** | LangChain | Agent orchestration, prompt chaining |
 | **Embeddings** | Sentence Transformers (`all-MiniLM-L6-v2`) | Local 384-dim text-to-vector encoding |
 | **Vector Search** | FAISS-CPU (IndexFlatIP) | Cosine-similarity candidate retrieval |
@@ -190,23 +190,30 @@ RecruitX/
 │   └── interview_generator.py # LLM-based question generation
 ├── frontend/                  # Streamlit dashboard
 │   └── dashboard.py           # Full recruiter UI (4 tabs)
-├── tests/                     # pytest suite (14 files, ~4000 lines)
+├── tests/                     # pytest suite (13 test files, ~4000 lines)
 │   ├── conftest.py            # Shared fixtures
 │   ├── test_api.py            # API endpoint tests
 │   ├── test_orchestrator.py   # Pipeline integration tests
 │   ├── test_scoring.py        # Scoring engine tests
 │   ├── test_resume_parser.py  # Resume parsing tests
-│   └── ...
+│   └── ... (13 test files total)
 ├── data/                      # Data files
 │   ├── sample_candidates.csv  # 50 Indian candidate profiles
 │   ├── sample_jds/            # 3 sample job descriptions
 │   ├── faiss_index.bin        # FAISS vector index (auto-generated)
-│   └── faiss_id_map.pkl       # FAISS ID mapping (auto-generated)
+│   ├── faiss_id_map.pkl       # FAISS ID mapping (auto-generated)
+│   └── validate_candidates.py # CSV validation script
 ├── docs/                      # Documentation
-│   └── RecruitX_Master_Guide.md
-├── uploads/                   # Uploaded resume files
+│   ├── API_REFERENCE.md       # REST API reference (10 endpoints)
+│   ├── ARCHITECTURE.md        # System architecture
+│   └── PROJECT_STRUCTURE.md   # Project organization guide
+├── backups/                   # Database and FAISS index backups
+├── uploads/                   # Uploaded resume files (UUID-named)
+├── check_db.py                # Quick SQLite inspection script
 ├── .env                       # Environment variables (not in Git)
 ├── .gitignore
+├── INSTALL.md                 # Installation guide
+├── LICENSE                    # MIT License
 ├── requirements.txt           # Python dependencies
 ├── render.yaml                # Render deployment blueprint
 └── README.md                  # This file
@@ -262,7 +269,7 @@ streamlit run frontend/dashboard.py
 
 ## API Overview
 
-> **Complete API reference is in [API.md](./API.md).**
+> **Complete API reference is in [docs/API_REFERENCE.md](./docs/API_REFERENCE.md).**
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -312,7 +319,7 @@ Key environment variables (set in `.env`):
 
 ## Testing
 
-The project includes 14 test files with comprehensive unit and integration tests.
+The project includes 13 test files with comprehensive unit and integration tests.
 
 ```bash
 # Run all tests

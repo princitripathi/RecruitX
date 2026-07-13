@@ -1846,8 +1846,7 @@ RecruitX/
 │   └── ARCHITECTURE.md              # This file
 │
 ├── uploads/                         # Resume file uploads (runtime)
-├── backups/                         # Empty — intended for DB backups
-├── logs/                            # Log files (runtime)
+├── backups/                         # Database and FAISS index backups
 │
 ├── .env                             # Environment variables (not committed to git)
 ├── .gitignore
@@ -1877,7 +1876,7 @@ RecruitX/
 
 - **Why:** Semantic search requires vector similarity, not keyword matching. FAISS-CPU is fast (millions of vectors in milliseconds), lightweight (no separate server), and the `IndexFlatIP` provides exact cosine similarity (not approximate).
 - **Trade-off:** Index must be rebuilt when new candidates are added.
-- **Evidence:** `embedding/vector_store.py` uses `faiss.IndexFlatIP(384)` with L2 normalization.
+- **Evidence:** `embeddings/vector_store.py` uses `faiss.IndexFlatIP(384)` with L2 normalization.
 
 ### SentenceTransformers (instead of TF-IDF/BoW)
 
