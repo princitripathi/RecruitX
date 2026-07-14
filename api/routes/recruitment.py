@@ -13,7 +13,6 @@ import logging
 
 from fastapi import APIRouter, HTTPException
 
-from agents.orchestrator import RecruitmentOrchestrator
 from api.models import FeedbackRequest, RecruitRequest, RecruitResponse
 from database import crud
 from database.db_setup import get_db_connection
@@ -43,6 +42,7 @@ def recruit(request: RecruitRequest):
         HTTPException 500: If the pipeline fails internally.
     """
     try:
+        from agents.orchestrator import RecruitmentOrchestrator
         orchestrator = RecruitmentOrchestrator()
         result = orchestrator.run_recruitment_pipeline(
             jd_text=request.job_description,

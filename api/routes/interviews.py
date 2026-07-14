@@ -16,14 +16,21 @@ import logging
 from fastapi import APIRouter, HTTPException
 
 from api.models import InterviewRequest, InterviewResponse
-from utils.interview_generator import InterviewQuestionGenerator
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
-# Singleton generator instance (shared across requests)
-_generator: InterviewQuestionGenerator = InterviewQuestionGenerator()
+# Lazy singleton — created on first use to avoid blocking FastAPI startup
+_generator = None
+
+
+def _get_generator():
+    global _generator
+    if _generator is None:
+        from utils.interview_generator import InterviewQuestionGenerator
+        _generator = InterviewQuestionGenerator()
+    return _generator
 
 
 @router.post("/api/interview-questions", response_model=InterviewResponse)
@@ -67,7 +74,8 @@ def generate_interview_questions(request: InterviewRequest):
             request.candidate_name,
         )
 
-        result = _generator.generate(
+        gen = _get_generator()
+        result = gen.generate(
             candidate_info=candidate_info,
             job_description=request.job_description,
             skill_gap=skill_gap,

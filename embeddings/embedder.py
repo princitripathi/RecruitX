@@ -1,8 +1,6 @@
 import logging
 from typing import List
 
-from sentence_transformers import SentenceTransformer
-
 logger = logging.getLogger(__name__)
 
 # Constants
@@ -22,6 +20,8 @@ class CandidateEmbedder:
             model_name: The name of the sentence-transformers model to use.
         """
         try:
+            from sentence_transformers import SentenceTransformer
+
             logger.info("Initializing CandidateEmbedder with model: %s", model_name)
             self.model = SentenceTransformer(model_name)
         except Exception as e:

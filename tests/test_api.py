@@ -60,7 +60,7 @@ class TestRecruitEndpoint:
 
     SAMPLE_JD = "We are looking for a Senior Python Developer with 5+ years experience."
 
-    @patch("api.routes.recruitment.RecruitmentOrchestrator")
+    @patch("agents.orchestrator.RecruitmentOrchestrator")
     def test_recruit_success(self, mock_orchestrator_class):
         mock_instance = MagicMock()
         mock_instance.run_recruitment_pipeline.return_value = {
@@ -123,7 +123,7 @@ class TestRecruitEndpoint:
         )
         assert response.status_code == 422
 
-    @patch("api.routes.recruitment.RecruitmentOrchestrator")
+    @patch("agents.orchestrator.RecruitmentOrchestrator")
     def test_recruit_orchestrator_value_error(self, mock_orchestrator_class):
         mock_instance = MagicMock()
         mock_instance.run_recruitment_pipeline.side_effect = ValueError(
@@ -138,7 +138,7 @@ class TestRecruitEndpoint:
         assert response.status_code == 400
         assert "non-empty" in response.json()["detail"]
 
-    @patch("api.routes.recruitment.RecruitmentOrchestrator")
+    @patch("agents.orchestrator.RecruitmentOrchestrator")
     def test_recruit_orchestrator_runtime_error(self, mock_orchestrator_class):
         mock_instance = MagicMock()
         mock_instance.run_recruitment_pipeline.side_effect = RuntimeError(
@@ -153,7 +153,7 @@ class TestRecruitEndpoint:
         assert response.status_code == 500
         assert "FAISS" in response.json()["detail"]
 
-    @patch("api.routes.recruitment.RecruitmentOrchestrator")
+    @patch("agents.orchestrator.RecruitmentOrchestrator")
     def test_recruit_top_k_defaults_to_10(self, mock_orchestrator_class):
         mock_instance = MagicMock()
         mock_instance.run_recruitment_pipeline.return_value = {
@@ -368,7 +368,7 @@ class TestResumeUpload:
         assert response.status_code == 400
         assert "Invalid file type" in response.json()["detail"]
 
-    @patch("api.routes.resumes.ResumeParser")
+    @patch("utils.resume_parser.ResumeParser")
     def test_upload_valid_pdf(self, mock_parser_class):
         mock_instance = MagicMock()
         mock_instance.process_resume.return_value = {
@@ -395,7 +395,7 @@ class TestResumeUpload:
         assert data["candidate"] is not None
         assert data["candidate"]["name"] == "Rahul Sharma"
 
-    @patch("api.routes.resumes.ResumeParser")
+    @patch("utils.resume_parser.ResumeParser")
     def test_upload_valid_docx(self, mock_parser_class):
         mock_instance = MagicMock()
         mock_instance.process_resume.return_value = {
@@ -419,7 +419,7 @@ class TestResumeUpload:
         data = response.json()
         assert data["candidate"]["name"] == "Priya Singh"
 
-    @patch("api.routes.resumes.ResumeParser")
+    @patch("utils.resume_parser.ResumeParser")
     def test_upload_duplicate_email_returns_409(self, mock_parser_class):
         mock_instance = MagicMock()
         mock_instance.process_resume.return_value = {
@@ -438,7 +438,7 @@ class TestResumeUpload:
         data = response.json()
         assert "already exists" in data["detail"]
 
-    @patch("api.routes.resumes.ResumeParser")
+    @patch("utils.resume_parser.ResumeParser")
     def test_upload_duplicate_resume(self, mock_parser_class):
         mock_instance = MagicMock()
         mock_instance.process_resume.return_value = {
@@ -457,7 +457,7 @@ class TestResumeUpload:
         assert data["is_new"] is False
         assert "Duplicate" in data["message"]
 
-    @patch("api.routes.resumes.ResumeParser")
+    @patch("utils.resume_parser.ResumeParser")
     def test_upload_parser_error(self, mock_parser_class):
         mock_instance = MagicMock()
         mock_instance.process_resume.side_effect = ValueError("Invalid email format")

@@ -21,8 +21,6 @@ import uuid
 
 from fastapi import APIRouter, HTTPException, UploadFile
 
-from utils.resume_parser import ResumeParser
-
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
@@ -110,6 +108,7 @@ async def upload_resume(file: UploadFile):
 
     # Run through ResumeParser
     try:
+        from utils.resume_parser import ResumeParser
         parser = ResumeParser()
         filename = file.filename or "unknown"
         result = parser.process_resume(save_path, filename)

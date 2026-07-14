@@ -20,7 +20,6 @@ import logging
 
 from fastapi import APIRouter
 
-from agents.chat_agent import ChatAgent
 from api.models import ChatRequest
 from database.crud import add_chat_message, get_chat_history
 from database.db_setup import get_db_connection
@@ -29,8 +28,16 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
-# Singleton ChatAgent instance (shared across requests for connection reuse)
-_chat_agent: ChatAgent = ChatAgent()
+# Lazy singleton — ChatAgent is created on first use to avoid blocking FastAPI startup
+_chat_agent = None
+
+
+def _get_chat_agent():
+    global _chat_agent
+    if _chat_agent is None:
+        from agents.chat_agent import ChatAgent
+        _chat_agent = ChatAgent()
+    return _chat_agent
 
 
 @router.post("/api/chat")
@@ -60,7 +67,8 @@ def chat(request: ChatRequest):
         history = get_chat_history(conn, request.session_id)
 
         # Process the message through the Chat Agent
-        result = _chat_agent.process_message(
+        agent = _get_chat_agent()
+        result = agent.process_message(
             message=request.message,
             history=history,
             conn=conn,
