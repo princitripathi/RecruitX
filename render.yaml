@@ -9,7 +9,7 @@ services:
   - type: web
     name: recruitx-api
     env: python
-    region: oregon  # Change to your preferred region
+    region: oregon
     plan: free
     buildCommand: |
       pip install --upgrade pip
@@ -18,8 +18,10 @@ services:
     healthCheckPath: /api/health
     autoDeploy: true
     envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.0
       - key: OPENROUTER_API_KEY
-        sync: false  # Set this manually in Render dashboard (Secret)
+        sync: false
       - key: OPENROUTER_BASE_URL
         value: https://openrouter.ai/api/v1
       - key: OPENROUTER_MODEL
@@ -48,27 +50,31 @@ services:
         value: INFO
       - key: PYTHONPATH
         value: /opt/render/project/src
-    # Pre-deploy command to setup database and build index
     preDeployCommand: |
       python database/db_setup.py
       python embeddings/build_index.py
 
   # -----------------------------------------
-  # RecruitX Streamlit Frontend Service (Optional)
-  # Uncomment if you want to deploy frontend separately
+  # RecruitX Streamlit Frontend Service
   # -----------------------------------------
-  # - type: web
-  #   name: recruitx-frontend
-  #   env: python
-  #   region: oregon
-  #   plan: free
-  #   buildCommand: pip install -r requirements.txt
-  #   startCommand: streamlit run frontend/dashboard.py --server.port $PORT --server.address 0.0.0.0 --server.headless true
-  #   envVars:
-  #     - key: API_BASE_URL
-  #       value: https://recruitx-api.onrender.com  # Update with your API URL
-  #     - key: PYTHONPATH
-  #       value: /opt/render/project/src
+  - type: web
+    name: recruitx-frontend
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: streamlit run frontend/dashboard.py --server.port $PORT --server.address 0.0.0.0 --server.headless true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.0
+      # TODO: After first deployment, set API_BASE_URL to the actual backend URL.
+      # The frontend defaults to http://localhost:8000 for local development.
+      # Render assigns URLs dynamically (e.g. https://recruitx-api.onrender.com).
+      # Update this value in the Render dashboard after both services are live.
+      - key: API_BASE_URL
+        value: http://localhost:8000
+      - key: PYTHONPATH
+        value: /opt/render/project/src
 
 # -----------------------------------------
 # Notes for Deployment
@@ -78,6 +84,8 @@ services:
 # 3. Click "New" -> "Blueprint" -> Connect your GitHub repo
 # 4. Render will detect render.yaml and create services
 # 5. Add OPENROUTER_API_KEY as a Secret in the API service settings
-# 6. The free tier spins down after 15 min of inactivity (cold start ~30s)
-# 7. SQLite database persists on Render disk (survives restarts)
+# 6. SQLite is used for demo purposes. On Render free tier, candidate data may
+#    reset after redeployment or service recreation. This is expected for demo.
+# 7. The free tier spins down after 15 min of inactivity. The first request
+#    after spin-down takes longer due to cold start + model initialization.
 # 8. FAISS index is rebuilt on each deploy (preDeployCommand)

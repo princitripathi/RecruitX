@@ -51,13 +51,17 @@ app = FastAPI(
 
 # ============================================================
 # CORS Middleware
-# Allow all origins for development (Streamlit frontend runs
-# on a different port). Restrict in production.
+# Allow origins from CORS_ORIGINS env var (comma-separated)
+# or default to "*" for local development (Streamlit on :8501).
+# Override in production via Render dashboard env vars.
 # ============================================================
+
+cors_origins_str = os.getenv("CORS_ORIGINS", "*")
+cors_origins = [o.strip() for o in cors_origins_str.split(",")] if cors_origins_str else ["*"]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
