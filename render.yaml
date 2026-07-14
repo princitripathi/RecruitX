@@ -14,6 +14,8 @@ services:
     buildCommand: |
       pip install --upgrade pip
       pip install -r requirements.txt
+      python database/db_setup.py
+      python embeddings/build_index.py
     startCommand: uvicorn api.main:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /api/health
     autoDeploy: true
@@ -50,9 +52,6 @@ services:
         value: INFO
       - key: PYTHONPATH
         value: /opt/render/project/src
-    preDeployCommand: |
-      python database/db_setup.py
-      python embeddings/build_index.py
 
   # -----------------------------------------
   # RecruitX Streamlit Frontend Service
@@ -88,4 +87,4 @@ services:
 #    reset after redeployment or service recreation. This is expected for demo.
 # 7. The free tier spins down after 15 min of inactivity. The first request
 #    after spin-down takes longer due to cold start + model initialization.
-# 8. FAISS index is rebuilt on each deploy (preDeployCommand)
+# 8. FAISS index and database are rebuilt on each deploy (buildCommand)
