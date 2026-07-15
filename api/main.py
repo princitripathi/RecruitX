@@ -11,7 +11,6 @@ Or from the project root:
     python -m uvicorn api.main:app --reload --port 8000
 """
 
-import gc
 import logging
 import os
 
@@ -85,49 +84,15 @@ app.include_router(interviews.router)
 
 @app.on_event("startup")
 async def startup_event():
-    """Pre-load heavy AI models and indexes at startup to avoid per-request latency spikes."""
-    # Limit torch/OpenMP threads to 1 to minimize per-thread memory (~30-50MB saved)
     os.environ.setdefault("OMP_NUM_THREADS", "1")
     os.environ.setdefault("MKL_NUM_THREADS", "1")
     os.environ.setdefault("OPENBLAS_NUM_THREADS", "1")
-    try:
-        import torch
-        torch.set_num_threads(1)
-    except ImportError:
-        pass
 
     logger.info("=" * 60)
     logger.info("%s v%s starting up", APP_NAME, APP_VERSION)
     logger.info("API docs: http://localhost:%d/docs", API_PORT)
     logger.info("=" * 60)
-
-    # Pre-load SentenceTransformer model (~80MB) into memory once
-    try:
-        from embeddings.embedder import preload_model
-        preload_model()
-    except Exception as e:
-        logger.warning("Could not pre-load SentenceTransformer model: %s", e)
-
-    # Pre-load FAISS index into memory once
-    try:
-        from embeddings.vector_store import preload_index
-        preload_index(
-            index_path=os.getenv("FAISS_INDEX_PATH", "data/faiss_index.bin"),
-            map_path=os.getenv("FAISS_ID_MAP_PATH", "data/faiss_id_map.pkl"),
-            dimension=int(os.getenv("EMBEDDING_DIMENSION", "384")),
-        )
-    except Exception as e:
-        logger.warning("Could not pre-load FAISS index: %s", e)
-
-    # Pre-initialize the orchestrator singleton (creates agents + LLM chains once)
-    try:
-        from api.routes.recruitment import _init_orchestrator
-        _init_orchestrator()
-    except Exception as e:
-        logger.warning("Could not pre-initialize orchestrator: %s", e)
-
-    gc.collect()
-    logger.info("Startup pre-loading complete")
+    logger.info("Startup complete — AI resources will be lazy-loaded on first request")
 
 
 # ============================================================
