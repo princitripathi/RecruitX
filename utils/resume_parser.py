@@ -91,7 +91,14 @@ class ResumeParser:
     """
 
     def __init__(self):
+        self._parse_chain = None
         logger.info("Initialized ResumeParser")
+
+    def _get_parse_chain(self):
+        """Return a cached LangChain chain for resume parsing."""
+        if self._parse_chain is None:
+            self._parse_chain = self._create_parse_chain()
+        return self._parse_chain
 
     # ---------------------------------------------------------------
     # Public orchestrator
@@ -414,6 +421,8 @@ class ResumeParser:
             base_url=os.getenv("OPENROUTER_BASE_URL", DEFAULT_BASE_URL),
             model=os.getenv("OPENROUTER_MODEL", DEFAULT_MODEL),
             temperature=0.1,
+            request_timeout=30,
+            max_retries=1,
         )
 
         return prompt | llm | StrOutputParser()
@@ -436,7 +445,7 @@ class ResumeParser:
         Raises:
             RuntimeError: If LLM parsing fails after retries.
         """
-        chain = self._create_parse_chain()
+        chain = self._get_parse_chain()
 
         max_retries = int(os.getenv("LLM_MAX_RETRIES", "3"))
         last_error: Optional[Exception] = None

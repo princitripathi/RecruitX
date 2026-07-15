@@ -149,6 +149,7 @@ class JDAnalystAgent:
             model=self.model,
             temperature=self.temperature,
             request_timeout=30,
+            max_retries=1,
         )
 
         return prompt | llm | StrOutputParser()

@@ -9,6 +9,8 @@ These endpoints are the primary interface between the recruiter (via
 Streamlit dashboard) and the RecruitmentOrchestrator agent.
 """
 
+import asyncio
+import gc
 import logging
 
 from fastapi import APIRouter, HTTPException
@@ -24,14 +26,22 @@ router = APIRouter()
 _orchestrator = None
 
 
+def _init_orchestrator():
+    """Pre-initialize the orchestrator singleton at startup."""
+    global _orchestrator
+    if _orchestrator is None:
+        from agents.orchestrator import RecruitmentOrchestrator
+        _orchestrator = RecruitmentOrchestrator()
+
+
 @router.post("/api/recruit", response_model=RecruitResponse)
-def recruit(request: RecruitRequest):
+async def recruit(request: RecruitRequest):
     """
     Run the recruitment pipeline and return a ranked shortlist.
 
-    Accepts a raw job description, analyzes it using the JD Analyst Agent,
-    searches for matching candidates via FAISS semantic search, scores and
-    ranks them, and returns the top K results with explanations.
+    Async wrapper that offloads the blocking pipeline to a thread pool
+    so uvicorn's event loop stays free to serve health checks and other
+    requests while the LLM call and scoring run.
 
     Args:
         request: RecruitRequest with job_description and optional top_k.
@@ -46,12 +56,15 @@ def recruit(request: RecruitRequest):
     try:
         global _orchestrator
         if _orchestrator is None:
-            from agents.orchestrator import RecruitmentOrchestrator
-            _orchestrator = RecruitmentOrchestrator()
-        result = _orchestrator.run_recruitment_pipeline(
-            jd_text=request.job_description,
-            top_k=request.top_k,
+            _init_orchestrator()
+        loop = asyncio.get_running_loop()
+        result = await loop.run_in_executor(
+            None,
+            _orchestrator.run_recruitment_pipeline,
+            request.job_description,
+            request.top_k,
         )
+        gc.collect()
         logger.info(
             "Recruitment pipeline completed: %d candidates in %.0f ms",
             len(result.get("shortlist", [])),

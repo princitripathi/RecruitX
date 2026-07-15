@@ -30,6 +30,7 @@ Usage:
     # }
 """
 
+import gc
 import logging
 import time
 from typing import Any, Dict, List, Optional
@@ -142,6 +143,8 @@ class RecruitmentOrchestrator:
             logger.error("JD Analyst failed: %s", str(e))
             raise RuntimeError(f"JD Analyst failed: {e}")
 
+        gc.collect()
+
         # ---------------------------------------------------------------
         # Step 2: Candidate Ranker — Semantic search via FAISS
         # ---------------------------------------------------------------
@@ -156,6 +159,8 @@ class RecruitmentOrchestrator:
         except Exception as e:
             logger.error("Candidate ranking failed: %s", str(e))
             raise RuntimeError(f"Candidate ranking failed: {e}")
+
+        gc.collect()
 
         if not ranked_candidates:
             elapsed = (time.time() - start_time) * 1000
@@ -184,6 +189,8 @@ class RecruitmentOrchestrator:
         # ---------------------------------------------------------------
         logger.info("Steps 4-6/8: Scoring %d candidates...", len(ranked_candidates))
         entries = self._process_candidates(ranked_candidates, candidate_map, jd_analysis)
+
+        gc.collect()
 
         if not entries:
             elapsed = (time.time() - start_time) * 1000

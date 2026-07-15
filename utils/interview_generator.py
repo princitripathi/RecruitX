@@ -142,7 +142,14 @@ class InterviewQuestionGenerator:
 
     def __init__(self) -> None:
         """Initialize the Interview Question Generator."""
+        self._generation_chain = None
         logger.info("Initialized InterviewQuestionGenerator")
+
+    def _get_generation_chain(self):
+        """Return a cached LangChain chain for question generation."""
+        if self._generation_chain is None:
+            self._generation_chain = self._create_generation_chain()
+        return self._generation_chain
 
     # ---------------------------------------------------------------
     # Public interface
@@ -275,6 +282,8 @@ class InterviewQuestionGenerator:
             base_url=os.getenv("OPENROUTER_BASE_URL", DEFAULT_BASE_URL),
             model=os.getenv("OPENROUTER_MODEL", DEFAULT_MODEL),
             temperature=0.3,
+            request_timeout=30,
+            max_retries=1,
         )
 
         return prompt | llm | StrOutputParser()
@@ -292,7 +301,7 @@ class InterviewQuestionGenerator:
         Raises:
             RuntimeError: If LLM generation fails after all retries.
         """
-        chain = self._create_generation_chain()
+        chain = self._get_generation_chain()
 
         max_retries = int(os.getenv("LLM_MAX_RETRIES", "3"))
         last_error: Optional[Exception] = None

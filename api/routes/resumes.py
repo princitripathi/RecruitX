@@ -32,6 +32,8 @@ MAX_UPLOAD_SIZE = int(os.getenv("MAX_UPLOAD_SIZE_MB", "10")) * 1024 * 1024
 # Upload directory
 UPLOAD_DIR = os.getenv("UPLOAD_DIR", "uploads")
 
+_resume_parser = None
+
 
 @router.post("/api/upload-resume")
 async def upload_resume(file: UploadFile):
@@ -106,12 +108,14 @@ async def upload_resume(file: UploadFile):
             detail=f"Failed to save uploaded file: {e}",
         )
 
-    # Run through ResumeParser
+    # Run through ResumeParser (singleton — avoids re-creating LLM chains)
     try:
         from utils.resume_parser import ResumeParser
-        parser = ResumeParser()
+        global _resume_parser
+        if _resume_parser is None:
+            _resume_parser = ResumeParser()
         filename = file.filename or "unknown"
-        result = parser.process_resume(save_path, filename)
+        result = _resume_parser.process_resume(save_path, filename)
         if result.get("duplicate_reason") == "email":
             raise HTTPException(status_code=409, detail=result["message"])
         return result

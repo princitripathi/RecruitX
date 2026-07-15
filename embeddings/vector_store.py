@@ -17,6 +17,26 @@ logger = logging.getLogger(__name__)
 _faiss_cache = {}
 
 
+def preload_index(
+    index_path: str,
+    map_path: str,
+    dimension: int = 384,
+) -> None:
+    """
+    Eagerly load the FAISS index into the module-level cache.
+    Call this once at application startup to avoid per-request disk I/O.
+    """
+    cache_key = (os.path.abspath(index_path), os.path.abspath(map_path))
+    if cache_key in _faiss_cache:
+        return
+    if not os.path.exists(index_path) or not os.path.exists(map_path):
+        logger.warning("FAISS index files not found at startup — skipping preload")
+        return
+    store = CandidateVectorStore(dimension=dimension)
+    store.load(index_path, map_path)
+    logger.info("Pre-loaded FAISS index with %d vectors", store.index.ntotal)
+
+
 class CandidateVectorStore:
     """
     Manages a FAISS index and the metadata mapping between FAISS positions

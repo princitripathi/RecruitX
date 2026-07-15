@@ -197,6 +197,8 @@ class ChatAgent:
             base_url=self.base_url,
             model=self.model,
             temperature=self.temperature,
+            request_timeout=30,
+            max_retries=1,
         )
         return prompt | llm | StrOutputParser()
 
@@ -220,6 +222,8 @@ class ChatAgent:
             base_url=self.base_url,
             model=self.model,
             temperature=self.temperature,
+            request_timeout=30,
+            max_retries=1,
         )
         return prompt | llm | StrOutputParser()
 

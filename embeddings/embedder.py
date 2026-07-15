@@ -1,4 +1,6 @@
+import gc
 import logging
+import os
 from typing import List, Optional
 
 logger = logging.getLogger(__name__)
@@ -8,6 +10,37 @@ EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2"
 EMBEDDING_DIMENSION = 384
 
 _shared_model = None
+
+
+def _configure_torch_threads() -> None:
+    """
+    Limit PyTorch to a single CPU thread to minimize memory overhead.
+    On Render Free (512MB) each extra thread allocates ~30-50MB of scratch space.
+    """
+    try:
+        import torch
+        torch.set_num_threads(1)
+        os.environ.setdefault("OMP_NUM_THREADS", "1")
+        os.environ.setdefault("MKL_NUM_THREADS", "1")
+        os.environ.setdefault("OPENBLAS_NUM_THREADS", "1")
+    except ImportError:
+        pass
+
+
+def preload_model(model_name: str = EMBEDDING_MODEL_NAME) -> None:
+    """
+    Eagerly load the SentenceTransformer model into the shared singleton cache.
+    Call this once at application startup to avoid per-request loading overhead.
+    Uses torch.float32 explicitly and single-thread to minimize memory.
+    """
+    global _shared_model
+    if _shared_model is not None:
+        return
+    _configure_torch_threads()
+    from sentence_transformers import SentenceTransformer
+    logger.info("Pre-loading SentenceTransformer model: %s", model_name)
+    _shared_model = SentenceTransformer(model_name)
+    logger.info("SentenceTransformer model loaded successfully")
 
 
 class CandidateEmbedder:
@@ -22,6 +55,7 @@ class CandidateEmbedder:
                 logger.info("Reusing cached SentenceTransformer model")
                 self.model = _shared_model
             else:
+                _configure_torch_threads()
                 from sentence_transformers import SentenceTransformer
 
                 logger.info("Loading SentenceTransformer model: %s", model_name)
@@ -48,7 +82,10 @@ class CandidateEmbedder:
 
         try:
             embedding = self.model.encode(text)
-            return embedding.tolist()
+            result = embedding.tolist()
+            del embedding
+            gc.collect()
+            return result
         except Exception as e:
             logger.error("Unexpected error during text embedding: %s", str(e))
             raise RuntimeError(f"Failed to embed text. Error: {e}")
@@ -70,7 +107,10 @@ class CandidateEmbedder:
 
         try:
             embeddings = self.model.encode(texts)
-            return embeddings.tolist()
+            result = embeddings.tolist()
+            del embeddings
+            gc.collect()
+            return result
         except Exception as e:
             logger.error("Unexpected error during batch text embedding: %s", str(e))
             raise RuntimeError(f"Failed to embed batch text. Error: {e}")
