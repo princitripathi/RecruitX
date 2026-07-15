@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 DEFAULT_BASE_URL = os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
 DEFAULT_MODEL = os.getenv("OPENROUTER_MODEL", "mistralai/mistral-7b-instruct:free")
 DEFAULT_TEMPERATURE = float(os.getenv("LLM_TEMPERATURE", "0.1"))
-DEFAULT_MAX_RETRIES = int(os.getenv("LLM_MAX_RETRIES", "3"))
+DEFAULT_MAX_RETRIES = int(os.getenv("LLM_MAX_RETRIES", "1"))
 
 
 class JDAnalysis(BaseModel):
@@ -148,6 +148,7 @@ class JDAnalystAgent:
             base_url=self.base_url,
             model=self.model,
             temperature=self.temperature,
+            request_timeout=30,
         )
 
         return prompt | llm | StrOutputParser()

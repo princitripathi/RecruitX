@@ -1,11 +1,13 @@
 import logging
-from typing import List
+from typing import List, Optional
 
 logger = logging.getLogger(__name__)
 
 # Constants
 EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2"
 EMBEDDING_DIMENSION = 384
+
+_shared_model = None
 
 
 class CandidateEmbedder:
@@ -14,16 +16,17 @@ class CandidateEmbedder:
     """
 
     def __init__(self, model_name: str = EMBEDDING_MODEL_NAME):
-        """
-        Initialize the embedding model.
-        Args:
-            model_name: The name of the sentence-transformers model to use.
-        """
+        global _shared_model
         try:
-            from sentence_transformers import SentenceTransformer
+            if _shared_model is not None:
+                logger.info("Reusing cached SentenceTransformer model")
+                self.model = _shared_model
+            else:
+                from sentence_transformers import SentenceTransformer
 
-            logger.info("Initializing CandidateEmbedder with model: %s", model_name)
-            self.model = SentenceTransformer(model_name)
+                logger.info("Loading SentenceTransformer model: %s", model_name)
+                _shared_model = SentenceTransformer(model_name)
+                self.model = _shared_model
         except Exception as e:
             logger.error("Failed to initialize the embedding model: %s", str(e))
             raise RuntimeError(f"Could not load model {model_name}. Error: {e}")

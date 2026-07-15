@@ -21,6 +21,8 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
+_orchestrator = None
+
 
 @router.post("/api/recruit", response_model=RecruitResponse)
 def recruit(request: RecruitRequest):
@@ -42,9 +44,11 @@ def recruit(request: RecruitRequest):
         HTTPException 500: If the pipeline fails internally.
     """
     try:
-        from agents.orchestrator import RecruitmentOrchestrator
-        orchestrator = RecruitmentOrchestrator()
-        result = orchestrator.run_recruitment_pipeline(
+        global _orchestrator
+        if _orchestrator is None:
+            from agents.orchestrator import RecruitmentOrchestrator
+            _orchestrator = RecruitmentOrchestrator()
+        result = _orchestrator.run_recruitment_pipeline(
             jd_text=request.job_description,
             top_k=request.top_k,
         )
