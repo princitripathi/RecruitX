@@ -72,7 +72,7 @@ services:
       # Render assigns URLs dynamically (e.g. https://recruitx-api.onrender.com).
       # Update this value in the Render dashboard after both services are live.
       - key: API_BASE_URL
-        value: http://localhost:8000
+        value: https://recruitx-api.onrender.com
       - key: PYTHONPATH
         value: /opt/render/project/src
 

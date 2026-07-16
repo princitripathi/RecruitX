@@ -1226,7 +1226,7 @@ def api_get(endpoint: str) -> Optional[Any]:
         Parsed JSON response, or None if the request failed.
     """
     try:
-        resp = requests.get(f"{API_BASE_URL}{endpoint}", timeout=10)
+        resp = requests.get(f"{API_BASE_URL}{endpoint}", timeout=120)
         resp.raise_for_status()
         return resp.json()
     except requests.exceptions.ConnectionError:
@@ -2272,7 +2272,7 @@ def _render_candidate_detail(candidates: List[Dict[str, Any]]) -> None:
     with col_del2:
         if st.button("🗑️  Delete Candidate", key=f"del_{selected_id}", use_container_width=True):
             del_resp = requests.delete(
-                f"{API_BASE_URL}/api/candidates/{selected_id}", timeout=10
+                f"{API_BASE_URL}/api/candidates/{selected_id}", timeout=120
             )
             if del_resp.ok:
                 st.success(f"Candidate #{selected_id} deleted.")
