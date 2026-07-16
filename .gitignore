@@ -48,6 +48,10 @@ htmlcov/
 .tox/
 .mypy_cache/
 
+# Tool configs
+.cache/
+.claude/
+
 # Distribution
 dist/
 build/
@@ -81,3 +85,9 @@ docs/RecruitX_Master_Guide.md
 # Runtime uploads
 uploads/*
 !uploads/.gitkeep
+
+# Backup snapshots
+backups/
+
+# Screenshots (documentation only)
+screenshots/

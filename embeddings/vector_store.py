@@ -9,8 +9,6 @@ import os
 import pickle
 import logging
 from typing import Dict, List, Tuple, Any, Optional
-import numpy as np
-import faiss
 
 logger = logging.getLogger(__name__)
 
@@ -50,6 +48,7 @@ class CandidateVectorStore:
         Args:
             dimension: The dimension of the embedding vectors.
         """
+        import faiss
         self.dimension = dimension
         # Using Inner Product (IndexFlatIP) because after L2 normalization,
         # the inner product is mathematically equivalent to Cosine Similarity.
@@ -76,6 +75,8 @@ class CandidateVectorStore:
             logger.error("Length mismatch: %d IDs and %d embeddings.", len(candidate_ids), len(embeddings))
             raise ValueError("The number of candidate IDs must match the number of embeddings.")
 
+        import faiss
+        import numpy as np
         # Convert to float32 numpy array
         embeddings_np = np.array(embeddings, dtype=np.float32)
 
@@ -106,6 +107,8 @@ class CandidateVectorStore:
             logger.warning("Search called on an empty FAISS index.")
             return []
 
+        import faiss
+        import numpy as np
         # Convert query embedding to 2D numpy float32 array
         query_np = np.array([query_embedding], dtype=np.float32)
 
@@ -143,6 +146,7 @@ class CandidateVectorStore:
         os.makedirs(os.path.dirname(os.path.abspath(index_path)), exist_ok=True)
         os.makedirs(os.path.dirname(os.path.abspath(map_path)), exist_ok=True)
 
+        import faiss
         faiss.write_index(self.index, index_path)
         with open(map_path, "wb") as f:
             pickle.dump(self.id_map, f)
@@ -177,6 +181,7 @@ class CandidateVectorStore:
             logger.error("ID mapping file not found: %s", map_path)
             raise FileNotFoundError(f"ID mapping file not found: {map_path}")
 
+        import faiss
         self.index = faiss.read_index(index_path)
         with open(map_path, "rb") as f:
             self.id_map = pickle.load(f)

@@ -35,17 +35,12 @@ import logging
 import time
 from typing import Any, Dict, List, Optional
 
-from agents.candidate_ranker import CandidateRankerAgent
-from agents.jd_analyst import JDAnalysis, JDAnalystAgent
-from agents.signal_analyzer import SignalAnalyzerAgent
 from database.crud import (
     add_job_description,
     add_shortlist_batch,
     get_candidates_by_ids,
 )
 from database.db_setup import get_db_connection
-from scoring.scoring_engine import ScoringEngine
-from scoring.skill_gap import SkillGapAnalyzer
 
 logger = logging.getLogger(__name__)
 
@@ -63,11 +58,11 @@ class RecruitmentOrchestrator:
 
     def __init__(
         self,
-        jd_analyst: Optional[JDAnalystAgent] = None,
-        candidate_ranker: Optional[CandidateRankerAgent] = None,
-        signal_analyzer: Optional[SignalAnalyzerAgent] = None,
-        scoring_engine: Optional[ScoringEngine] = None,
-        skill_gap_analyzer: Optional[SkillGapAnalyzer] = None,
+        jd_analyst=None,
+        candidate_ranker=None,
+        signal_analyzer=None,
+        scoring_engine=None,
+        skill_gap_analyzer=None,
     ) -> None:
         """
         Initialize the Recruitment Orchestrator with all sub-agents.
@@ -79,6 +74,12 @@ class RecruitmentOrchestrator:
             scoring_engine: ScoringEngine instance (created automatically if None).
             skill_gap_analyzer: SkillGapAnalyzer instance (created automatically if None).
         """
+        from agents.jd_analyst import JDAnalystAgent
+        from agents.candidate_ranker import CandidateRankerAgent
+        from agents.signal_analyzer import SignalAnalyzerAgent
+        from scoring.scoring_engine import ScoringEngine
+        from scoring.skill_gap import SkillGapAnalyzer
+
         self.jd_analyst = jd_analyst or JDAnalystAgent()
         self.candidate_ranker = candidate_ranker or CandidateRankerAgent()
         self.signal_analyzer = signal_analyzer or SignalAnalyzerAgent()
@@ -135,7 +136,7 @@ class RecruitmentOrchestrator:
         # ---------------------------------------------------------------
         logger.info("Step 1/8: Analyzing job description...")
         try:
-            jd_analysis: JDAnalysis = self.jd_analyst.analyze(jd_text)
+            jd_analysis = self.jd_analyst.analyze(jd_text)
         except ValueError as e:
             logger.error("JD Analyst validation error: %s", str(e))
             raise
@@ -226,7 +227,7 @@ class RecruitmentOrchestrator:
         self,
         ranked_candidates: List[tuple],
         candidate_map: Dict[int, Dict[str, Any]],
-        jd_analysis: JDAnalysis,
+        jd_analysis,
     ) -> List[Dict[str, Any]]:
         """
         Process each ranked candidate through Signal Analyzer, Scoring Engine,
@@ -373,7 +374,7 @@ class RecruitmentOrchestrator:
 
     def _persist_results(
         self,
-        jd_analysis: JDAnalysis,
+        jd_analysis,
         jd_text: str,
         entries: List[Dict[str, Any]],
     ) -> None:
@@ -440,7 +441,7 @@ class RecruitmentOrchestrator:
 
     def _build_response(
         self,
-        jd_analysis: JDAnalysis,
+        jd_analysis,
         entries: List[Dict[str, Any]],
         elapsed_ms: float,
     ) -> Dict[str, Any]:

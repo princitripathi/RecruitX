@@ -88,6 +88,9 @@ async def startup_event():
     os.environ.setdefault("MKL_NUM_THREADS", "1")
     os.environ.setdefault("OPENBLAS_NUM_THREADS", "1")
 
+    from utils.memory import log_memory
+    log_memory("startup")
+
     logger.info("=" * 60)
     logger.info("%s v%s starting up", APP_NAME, APP_VERSION)
     logger.info("API docs: http://localhost:%d/docs", API_PORT)

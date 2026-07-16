@@ -30,8 +30,11 @@ def _init_orchestrator():
     """Pre-initialize the orchestrator singleton at startup."""
     global _orchestrator
     if _orchestrator is None:
+        from utils.memory import log_memory
+        log_memory("before orchestrator init")
         from agents.orchestrator import RecruitmentOrchestrator
         _orchestrator = RecruitmentOrchestrator()
+        log_memory("after orchestrator init (model + FAISS loaded)")
 
 
 @router.post("/api/recruit", response_model=RecruitResponse)
@@ -65,6 +68,8 @@ async def recruit(request: RecruitRequest):
             request.top_k,
         )
         gc.collect()
+        from utils.memory import log_memory
+        log_memory("after first recruit request")
         logger.info(
             "Recruitment pipeline completed: %d candidates in %.0f ms",
             len(result.get("shortlist", [])),
