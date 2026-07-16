@@ -37,15 +37,9 @@ def preload_model(model_name: str = EMBEDDING_MODEL_NAME) -> None:
     if _shared_model is not None:
         return
     _configure_torch_threads()
-    logger.info("STEP 1")
     from sentence_transformers import SentenceTransformer
-    logger.info("STEP 2")
-
-    logger.info("STEP 3")
-    _shared_model = SentenceTransformer(model_name)
-    logger.info("STEP 4")
-
     logger.info("Pre-loading SentenceTransformer model: %s", model_name)
+    _shared_model = SentenceTransformer(model_name)
     logger.info("SentenceTransformer model loaded successfully")
 
 
@@ -62,10 +56,15 @@ class CandidateEmbedder:
                 self.model = _shared_model
             else:
                 _configure_torch_threads()
+                logger.info("STEP 1")
                 from sentence_transformers import SentenceTransformer
+                logger.info("STEP 2")
+
+                logger.info("STEP 3")
+                _shared_model = SentenceTransformer(model_name)
+                logger.info("STEP 4")
 
                 logger.info("Loading SentenceTransformer model: %s", model_name)
-                _shared_model = SentenceTransformer(model_name)
                 self.model = _shared_model
         except Exception as e:
             logger.error("Failed to initialize the embedding model: %s", str(e))
