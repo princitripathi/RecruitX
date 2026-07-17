@@ -110,6 +110,8 @@ class JDAnalystAgent:
             temperature: LLM temperature (default: 0.1)
             max_retries: Retry attempts on failure (default: 3)
         """
+        logger.info("ENTER JDAnalystAgent")
+
         self.api_key = api_key or os.getenv("OPENROUTER_API_KEY", "")
         self.base_url = base_url or DEFAULT_BASE_URL
         self.model = model or DEFAULT_MODEL
@@ -128,6 +130,7 @@ class JDAnalystAgent:
         )
 
         self.chain = self._create_chain()
+        logger.info("EXIT JDAnalystAgent")
 
     def _create_chain(self):
         """

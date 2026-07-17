@@ -49,6 +49,8 @@ class CandidateEmbedder:
     """
 
     def __init__(self, model_name: str = EMBEDDING_MODEL_NAME):
+        logger.info("ENTER CandidateEmbedder")
+
         global _shared_model
         try:
             if _shared_model is not None:
@@ -69,6 +71,8 @@ class CandidateEmbedder:
         except Exception as e:
             logger.error("Failed to initialize the embedding model: %s", str(e))
             raise RuntimeError(f"Could not load model {model_name}. Error: {e}")
+
+        logger.info("EXIT CandidateEmbedder")
 
     def embed_text(self, text: str) -> List[float]:
         """

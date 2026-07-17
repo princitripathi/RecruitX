@@ -74,6 +74,8 @@ class RecruitmentOrchestrator:
             scoring_engine: ScoringEngine instance (created automatically if None).
             skill_gap_analyzer: SkillGapAnalyzer instance (created automatically if None).
         """
+        logger.info("ENTER RecruitmentOrchestrator")
+
         from agents.jd_analyst import JDAnalystAgent
         from agents.candidate_ranker import CandidateRankerAgent
         from agents.signal_analyzer import SignalAnalyzerAgent
@@ -87,6 +89,7 @@ class RecruitmentOrchestrator:
         self.skill_gap_analyzer = skill_gap_analyzer or SkillGapAnalyzer()
 
         logger.info("Initialized RecruitmentOrchestrator with all 5 agents")
+        logger.info("EXIT RecruitmentOrchestrator")
 
     def run_recruitment_pipeline(
         self,

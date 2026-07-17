@@ -91,8 +91,11 @@ class ResumeParser:
     """
 
     def __init__(self):
+        logger.info("ENTER ResumeParser")
+
         self._parse_chain = None
         logger.info("Initialized ResumeParser")
+        logger.info("EXIT ResumeParser")
 
     def _get_parse_chain(self):
         """Return a cached LangChain chain for resume parsing."""

@@ -64,6 +64,8 @@ class CandidateRankerAgent:
         Raises:
             FileNotFoundError: If FAISS index or ID map files don't exist
         """
+        logger.info("ENTER CandidateRankerAgent")
+
         self.dimension = dimension
         self.index_path = index_path
         self.id_map_path = id_map_path
@@ -89,6 +91,7 @@ class CandidateRankerAgent:
             "Initialized CandidateRankerAgent with %d vectors in FAISS index",
             self.vector_store.index.ntotal,
         )
+        logger.info("EXIT CandidateRankerAgent")
 
     def rank_candidates(
         self,
