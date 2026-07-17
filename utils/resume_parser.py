@@ -91,11 +91,7 @@ class ResumeParser:
     """
 
     def __init__(self):
-        logger.info("ENTER ResumeParser")
-
         self._parse_chain = None
-        logger.info("Initialized ResumeParser")
-        logger.info("EXIT ResumeParser")
 
     def _get_parse_chain(self):
         """Return a cached LangChain chain for resume parsing."""
@@ -269,7 +265,7 @@ class ResumeParser:
             raise RuntimeError(f"PDF extraction failed: {e}")
 
         full_text = "\n".join(text_parts)
-        logger.info("Extracted %d characters from PDF '%s'", len(full_text), file_path)
+        logger.debug("Extracted %d characters from PDF '%s'", len(full_text), file_path)
         return full_text
 
     def _extract_docx(self, file_path: str) -> str:
@@ -299,7 +295,7 @@ class ResumeParser:
             raise RuntimeError(f"DOCX extraction failed: {e}")
 
         full_text = "\n".join(text_parts)
-        logger.info("Extracted %d characters from DOCX '%s'", len(full_text), file_path)
+        logger.debug("Extracted %d characters from DOCX '%s'", len(full_text), file_path)
         return full_text
 
     # ---------------------------------------------------------------
@@ -481,7 +477,7 @@ class ResumeParser:
                 logger.warning("LLM parsing attempt %d/%d failed: %s", attempt + 1, max_retries, str(e))
 
                 if attempt < max_retries - 1:
-                    logger.info("Retrying LLM parsing...")
+                    logger.debug("Retrying LLM parsing...")
 
         error_msg = (
             f"Failed to parse resume with LLM after {max_retries} attempts. "

@@ -110,8 +110,6 @@ class JDAnalystAgent:
             temperature: LLM temperature (default: 0.1)
             max_retries: Retry attempts on failure (default: 3)
         """
-        logger.info("ENTER JDAnalystAgent")
-
         self.api_key = api_key or os.getenv("OPENROUTER_API_KEY", "")
         self.base_url = base_url or DEFAULT_BASE_URL
         self.model = model or DEFAULT_MODEL
@@ -130,7 +128,6 @@ class JDAnalystAgent:
         )
 
         self.chain = self._create_chain()
-        logger.info("EXIT JDAnalystAgent")
 
     def _create_chain(self):
         """
@@ -176,7 +173,7 @@ class JDAnalystAgent:
             RuntimeError: If LLM analysis fails after all retry attempts.
         """
         if not jd_text or not isinstance(jd_text, str) or not jd_text.strip():
-            logger.error("Empty or invalid job description text provided")
+            logger.warning("Empty or invalid job description text provided")
             raise ValueError("Job description text must be a non-empty string")
 
         jd_text = jd_text.strip()
@@ -226,7 +223,7 @@ class JDAnalystAgent:
                 )
 
                 if attempt < self.max_retries - 1:
-                    logger.info("Retrying...")
+                    logger.debug("Retrying...")
 
         # All attempts exhausted
         error_msg = (

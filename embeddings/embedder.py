@@ -49,30 +49,18 @@ class CandidateEmbedder:
     """
 
     def __init__(self, model_name: str = EMBEDDING_MODEL_NAME):
-        logger.info("ENTER CandidateEmbedder")
-
         global _shared_model
         try:
             if _shared_model is not None:
-                logger.info("Reusing cached SentenceTransformer model")
                 self.model = _shared_model
             else:
                 _configure_torch_threads()
-                logger.info("STEP 1")
                 from sentence_transformers import SentenceTransformer
-                logger.info("STEP 2")
-
-                logger.info("STEP 3")
                 _shared_model = SentenceTransformer(model_name)
-                logger.info("STEP 4")
-
-                logger.info("Loading SentenceTransformer model: %s", model_name)
                 self.model = _shared_model
         except Exception as e:
             logger.error("Failed to initialize the embedding model: %s", str(e))
             raise RuntimeError(f"Could not load model {model_name}. Error: {e}")
-
-        logger.info("EXIT CandidateEmbedder")
 
     def embed_text(self, text: str) -> List[float]:
         """
@@ -86,7 +74,7 @@ class CandidateEmbedder:
             RuntimeError: If encoding fails.
         """
         if not text or not isinstance(text, str):
-            logger.error("Invalid input text provided for embedding.")
+            logger.warning("Invalid input text provided for embedding.")
             raise ValueError("Input text must be a non-empty string.")
 
         try:
@@ -111,7 +99,7 @@ class CandidateEmbedder:
             RuntimeError: If encoding fails.
         """
         if not texts or not isinstance(texts, list):
-            logger.error("Invalid input provided for batch embedding.")
+            logger.warning("Invalid input provided for batch embedding.")
             raise ValueError("Input must be a non-empty list of strings.")
 
         try:

@@ -74,36 +74,19 @@ class RecruitmentOrchestrator:
             scoring_engine: ScoringEngine instance (created automatically if None).
             skill_gap_analyzer: SkillGapAnalyzer instance (created automatically if None).
         """
-        logger.info("ENTER RecruitmentOrchestrator")
-
         from agents.jd_analyst import JDAnalystAgent
         from agents.candidate_ranker import CandidateRankerAgent
         from agents.signal_analyzer import SignalAnalyzerAgent
         from scoring.scoring_engine import ScoringEngine
         from scoring.skill_gap import SkillGapAnalyzer
 
-        logger.info("Creating JDAnalystAgent")
         self.jd_analyst = jd_analyst or JDAnalystAgent()
-        logger.info("JDAnalystAgent created")
-
-        logger.info("Creating CandidateRankerAgent")
         self.candidate_ranker = candidate_ranker or CandidateRankerAgent()
-        logger.info("CandidateRankerAgent created")
-
-        logger.info("Creating SignalAnalyzerAgent")
         self.signal_analyzer = signal_analyzer or SignalAnalyzerAgent()
-        logger.info("SignalAnalyzerAgent created")
-
-        logger.info("Creating ScoringEngine")
         self.scoring_engine = scoring_engine or ScoringEngine()
-        logger.info("ScoringEngine created")
-
-        logger.info("Creating SkillGapAnalyzer")
         self.skill_gap_analyzer = skill_gap_analyzer or SkillGapAnalyzer()
-        logger.info("SkillGapAnalyzer created")
 
         logger.info("Initialized RecruitmentOrchestrator with all 5 agents")
-        logger.info("EXIT RecruitmentOrchestrator")
 
     def run_recruitment_pipeline(
         self,
@@ -139,11 +122,11 @@ class RecruitmentOrchestrator:
             RuntimeError: If a critical sub-module fails irrecoverably.
         """
         if not jd_text or not isinstance(jd_text, str) or not jd_text.strip():
-            logger.error("Empty or invalid job description text provided")
+            logger.warning("Empty or invalid job description text provided")
             raise ValueError("Job description text must be a non-empty string")
 
         if not isinstance(top_k, int) or top_k < 1:
-            logger.error("Invalid top_k value: %s", top_k)
+            logger.warning("Invalid top_k value: %s", top_k)
             raise ValueError("top_k must be a positive integer")
 
         start_time = time.time()
@@ -155,7 +138,7 @@ class RecruitmentOrchestrator:
         try:
             jd_analysis = self.jd_analyst.analyze(jd_text)
         except ValueError as e:
-            logger.error("JD Analyst validation error: %s", str(e))
+            logger.warning("JD Analyst validation error: %s", str(e))
             raise
         except Exception as e:
             logger.error("JD Analyst failed: %s", str(e))
@@ -280,7 +263,7 @@ class RecruitmentOrchestrator:
                     candidate, jd_analysis.min_experience_years
                 )
             except Exception as e:
-                logger.error(
+                logger.warning(
                     "Signal analysis failed for candidate ID %d: %s", cid, str(e)
                 )
                 signal_result = {
@@ -304,7 +287,7 @@ class RecruitmentOrchestrator:
                     signal_result["signal_score"],
                 )
             except Exception as e:
-                logger.error(
+                logger.warning(
                     "Scoring failed for candidate ID %d: %s", cid, str(e)
                 )
                 skill_score = 0.0
@@ -318,7 +301,7 @@ class RecruitmentOrchestrator:
                     jd_analysis.preferred_skills,
                 )
             except Exception as e:
-                logger.error(
+                logger.warning(
                     "Skill gap analysis failed for candidate ID %d: %s",
                     cid, str(e),
                 )

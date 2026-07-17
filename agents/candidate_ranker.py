@@ -64,8 +64,6 @@ class CandidateRankerAgent:
         Raises:
             FileNotFoundError: If FAISS index or ID map files don't exist
         """
-        logger.info("ENTER CandidateRankerAgent")
-
         self.dimension = dimension
         self.index_path = index_path
         self.id_map_path = id_map_path
@@ -73,7 +71,7 @@ class CandidateRankerAgent:
         # Initialize or use injected embedder
         if embedder is not None:
             self.embedder = embedder
-            logger.info("Using injected embedder")
+            logger.debug("Using injected embedder")
         else:
             logger.info("Initializing CandidateEmbedder...")
             self.embedder = CandidateEmbedder()
@@ -81,7 +79,7 @@ class CandidateRankerAgent:
         # Initialize or use injected vector store
         if vector_store is not None:
             self.vector_store = vector_store
-            logger.info("Using injected vector store")
+            logger.debug("Using injected vector store")
         else:
             logger.info("Loading FAISS index from disk...")
             self.vector_store = CandidateVectorStore(dimension=self.dimension)
@@ -91,7 +89,6 @@ class CandidateRankerAgent:
             "Initialized CandidateRankerAgent with %d vectors in FAISS index",
             self.vector_store.index.ntotal,
         )
-        logger.info("EXIT CandidateRankerAgent")
 
     def rank_candidates(
         self,
@@ -119,18 +116,18 @@ class CandidateRankerAgent:
             RuntimeError: If embedding or search fails
         """
         if not search_query or not isinstance(search_query, str) or not search_query.strip():
-            logger.error("Empty or invalid search query provided")
+            logger.warning("Empty or invalid search query provided")
             raise ValueError("Search query must be a non-empty string")
 
         search_query = search_query.strip()
 
         try:
             # Step 1: Embed the query
-            logger.info("Embedding search query (top_k=%d)...", top_k)
+            logger.debug("Embedding search query (top_k=%d)...", top_k)
             query_vector = self.embedder.embed_text(search_query)
 
             # Step 2: Search FAISS index
-            logger.info("Searching FAISS vector store...")
+            logger.debug("Searching FAISS vector store...")
             raw_results = self.vector_store.search(query_vector, top_k=top_k)
 
             if not raw_results:
@@ -154,7 +151,7 @@ class CandidateRankerAgent:
             return normalized_results
 
         except ValueError as e:
-            logger.error("Invalid input for candidate ranking: %s", str(e))
+            logger.warning("Invalid input for candidate ranking: %s", str(e))
             raise
         except FileNotFoundError as e:
             logger.error("FAISS index files not found: %s", str(e))
