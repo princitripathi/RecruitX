@@ -82,11 +82,25 @@ class RecruitmentOrchestrator:
         from scoring.scoring_engine import ScoringEngine
         from scoring.skill_gap import SkillGapAnalyzer
 
+        logger.info("Creating JDAnalystAgent")
         self.jd_analyst = jd_analyst or JDAnalystAgent()
+        logger.info("JDAnalystAgent created")
+
+        logger.info("Creating CandidateRankerAgent")
         self.candidate_ranker = candidate_ranker or CandidateRankerAgent()
+        logger.info("CandidateRankerAgent created")
+
+        logger.info("Creating SignalAnalyzerAgent")
         self.signal_analyzer = signal_analyzer or SignalAnalyzerAgent()
+        logger.info("SignalAnalyzerAgent created")
+
+        logger.info("Creating ScoringEngine")
         self.scoring_engine = scoring_engine or ScoringEngine()
+        logger.info("ScoringEngine created")
+
+        logger.info("Creating SkillGapAnalyzer")
         self.skill_gap_analyzer = skill_gap_analyzer or SkillGapAnalyzer()
+        logger.info("SkillGapAnalyzer created")
 
         logger.info("Initialized RecruitmentOrchestrator with all 5 agents")
         logger.info("EXIT RecruitmentOrchestrator")
