@@ -1282,7 +1282,7 @@ def api_post_file(endpoint: str, file_bytes: bytes, filename: str) -> Optional[A
     try:
         files = {"file": (filename, file_bytes)}
         resp = requests.post(
-            f"{API_BASE_URL}{endpoint}", files=files, timeout=120
+            f"{API_BASE_URL}{endpoint}", files=files, timeout=12000
         )
         resp.raise_for_status()
         return resp.json()

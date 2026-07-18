@@ -11,6 +11,7 @@ The orchestrator agent calls this agent first during the recruitment pipeline.
 import json
 import logging
 import os
+import re
 from typing import List, Optional
 
 from dotenv import load_dotenv
@@ -193,7 +194,6 @@ class JDAnalystAgent:
                 cleaned = raw_response.strip()
                 if "```" in cleaned:
                     # Extract JSON from between code block markers
-                    import re
                     json_match = re.search(r"```(?:json)?\s*([\s\S]*?)```", cleaned)
                     if json_match:
                         cleaned = json_match.group(1).strip()

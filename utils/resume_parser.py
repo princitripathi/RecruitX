@@ -29,6 +29,7 @@ from pydantic import BaseModel, Field
 
 from database.crud import add_candidate, add_resume, get_candidate_by_email, get_resume_by_hash, update_candidate
 from database.db_setup import get_db_connection
+from embeddings.build_index import generate_candidate_text
 from embeddings.embedder import CandidateEmbedder
 from embeddings.vector_store import CandidateVectorStore
 
@@ -577,7 +578,7 @@ class ResumeParser:
                 logger.warning("Candidate ID %d not found — skipping vector store update", candidate_id)
                 return
 
-            candidate_text = self._generate_candidate_text(dict(candidate))
+            candidate_text = generate_candidate_text(dict(candidate))
 
             embedder = CandidateEmbedder()
             embedding = embedder.embed_text(candidate_text)
@@ -610,42 +611,6 @@ class ResumeParser:
             raise RuntimeError(f"Vector store update failed: {e}")
         finally:
             conn.close()
-
-    def _generate_candidate_text(self, candidate: Dict[str, Any]) -> str:
-        """
-        Generate a text representation of a candidate for embedding.
-
-        Mirrors the logic in embeddings/build_index.py.
-
-        Args:
-            candidate: Candidate dictionary from the database.
-
-        Returns:
-            A formatted string describing the candidate.
-        """
-        name = candidate.get("name", "").strip()
-        location = candidate.get("location", "").strip()
-        skills = candidate.get("skills", "").strip()
-        experience = candidate.get("experience_years", 0)
-        education = candidate.get("education", "").strip()
-        previous_roles = candidate.get("previous_roles")
-
-        text_parts = []
-        if name:
-            text_parts.append(f"Candidate: {name}.")
-        if location:
-            text_parts.append(f"Location: {location}.")
-        if skills:
-            text_parts.append(f"Skills: {skills}.")
-        if experience is not None:
-            text_parts.append(f"Experience: {experience} years.")
-        if education:
-            text_parts.append(f"Education: {education}.")
-        if previous_roles:
-            roles_clean = str(previous_roles).replace(";", ",").strip()
-            text_parts.append(f"Previous Roles: {roles_clean}.")
-
-        return " ".join(text_parts)
 
     # ---------------------------------------------------------------
     # Internal helpers
