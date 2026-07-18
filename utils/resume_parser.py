@@ -27,20 +27,15 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 from pydantic import BaseModel, Field
 
+from config import EMBEDDING_DIMENSION, FAISS_ID_MAP_PATH, FAISS_INDEX_PATH, OPENROUTER_API_KEY, OPENROUTER_BASE_URL, OPENROUTER_MODEL
 from database.crud import add_candidate, add_resume, get_candidate_by_email, get_resume_by_hash, update_candidate
 from database.db_setup import get_db_connection
 from embeddings.build_index import generate_candidate_text
 from embeddings.embedder import CandidateEmbedder
 from embeddings.vector_store import CandidateVectorStore
+from utils.llm_utils import clean_json_response
 
 logger = logging.getLogger(__name__)
-
-# Default configuration from environment
-DEFAULT_BASE_URL = os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
-DEFAULT_MODEL = os.getenv("OPENROUTER_MODEL", "mistralai/mistral-7b-instruct:free")
-FAISS_INDEX_PATH = os.getenv("FAISS_INDEX_PATH", "data/faiss_index.bin")
-FAISS_ID_MAP_PATH = os.getenv("FAISS_ID_MAP_PATH", "data/faiss_id_map.pkl")
-EMBEDDING_DIMENSION = int(os.getenv("EMBEDDING_DIMENSION", "384"))
 
 
 class ResumeParseResult(BaseModel):
@@ -417,9 +412,9 @@ class ResumeParser:
         ])
 
         llm = ChatOpenAI(
-            api_key=os.getenv("OPENROUTER_API_KEY", ""),
-            base_url=os.getenv("OPENROUTER_BASE_URL", DEFAULT_BASE_URL),
-            model=os.getenv("OPENROUTER_MODEL", DEFAULT_MODEL),
+            api_key=OPENROUTER_API_KEY,
+            base_url=OPENROUTER_BASE_URL,
+            model=OPENROUTER_MODEL,
             temperature=0.1,
             request_timeout=30,
             max_retries=1,
@@ -459,13 +454,7 @@ class ResumeParser:
 
                 raw_response = chain.invoke({"resume_text": cleaned_text})
 
-                cleaned_response = raw_response.strip()
-                if "```" in cleaned_response:
-                    json_match = re.search(r"```(?:json)?\s*([\s\S]*?)```", cleaned_response)
-                    if json_match:
-                        cleaned_response = json_match.group(1).strip()
-                    else:
-                        cleaned_response = cleaned_response.replace("```json", "").replace("```", "").strip()
+                cleaned_response = clean_json_response(raw_response)
 
                 parsed_json = json.loads(cleaned_response)
                 result = ResumeParseResult.model_validate(parsed_json)

@@ -28,7 +28,6 @@ Usage:
 import json
 import logging
 import os
-import re
 from typing import Any, Dict, List, Optional
 
 from langchain_core.output_parsers import StrOutputParser
@@ -36,11 +35,10 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 from pydantic import BaseModel, Field
 
-logger = logging.getLogger(__name__)
+from config import OPENROUTER_API_KEY, OPENROUTER_BASE_URL, OPENROUTER_MODEL
+from utils.llm_utils import clean_json_response
 
-# Default configuration from environment
-DEFAULT_BASE_URL = os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
-DEFAULT_MODEL = os.getenv("OPENROUTER_MODEL", "mistralai/mistral-7b-instruct:free")
+logger = logging.getLogger(__name__)
 
 
 SYSTEM_PROMPT = """You are a senior technical interviewer conducting a real interview. Your job is to generate concise, grounded, personalized interview questions for a job candidate.
@@ -278,9 +276,9 @@ class InterviewQuestionGenerator:
         ])
 
         llm = ChatOpenAI(
-            api_key=os.getenv("OPENROUTER_API_KEY", ""),
-            base_url=os.getenv("OPENROUTER_BASE_URL", DEFAULT_BASE_URL),
-            model=os.getenv("OPENROUTER_MODEL", DEFAULT_MODEL),
+            api_key=OPENROUTER_API_KEY,
+            base_url=OPENROUTER_BASE_URL,
+            model=OPENROUTER_MODEL,
             temperature=0.3,
             request_timeout=30,
             max_retries=1,
@@ -315,13 +313,7 @@ class InterviewQuestionGenerator:
 
                 raw_response = chain.invoke({"context": context})
 
-                cleaned_response = raw_response.strip()
-                if "```" in cleaned_response:
-                    json_match = re.search(r"```(?:json)?\s*([\s\S]*?)```", cleaned_response)
-                    if json_match:
-                        cleaned_response = json_match.group(1).strip()
-                    else:
-                        cleaned_response = cleaned_response.replace("```json", "").replace("```", "").strip()
+                cleaned_response = clean_json_response(raw_response)
 
                 parsed_json = json.loads(cleaned_response)
                 result = InterviewQuestions.model_validate(parsed_json)

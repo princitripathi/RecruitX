@@ -361,75 +361,9 @@ def add_job_description(
     return new_id
 
 
-def get_job_description_by_id(
-    conn: sqlite3.Connection, jd_id: int
-) -> Optional[Dict[str, Any]]:
-    """
-    Fetch a job description by its ID.
-
-    Args:
-        conn: Active SQLite connection
-        jd_id: The job description's ID
-
-    Returns:
-        Job description dictionary, or None if not found
-    """
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM job_descriptions WHERE id = ?", (jd_id,))
-    row = cursor.fetchone()
-
-    return dict(row) if row else None
-
-
 # ============================================================
 # SHORTLISTS — CRUD Operations
 # ============================================================
-
-def add_shortlist_entry(
-    conn: sqlite3.Connection,
-    jd_id: int,
-    candidate_id: int,
-    final_score: float,
-    semantic_score: float,
-    skill_score: float,
-    signal_score: float,
-    rank: int,
-    explanation: Optional[str] = None,
-) -> int:
-    """
-    Insert a single shortlist entry (one candidate scored against one JD).
-
-    Called by the orchestrator for each ranked candidate.
-
-    Args:
-        conn: Active SQLite connection
-        jd_id: ID of the job description
-        candidate_id: ID of the candidate
-        final_score: Weighted final score (0-100)
-        semantic_score: FAISS similarity score (0-100)
-        skill_score: Skill matching score (0-100)
-        signal_score: Behavioral signal score (0-100)
-        rank: Rank position (1 = best)
-        explanation: Human-readable explanation of the ranking
-
-    Returns:
-        The ID of the newly inserted shortlist entry
-    """
-    cursor = conn.cursor()
-    cursor.execute(
-        """
-        INSERT INTO shortlists (
-            jd_id, candidate_id, final_score, semantic_score,
-            skill_score, signal_score, rank, explanation
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        """,
-        (
-            jd_id, candidate_id, final_score, semantic_score,
-            skill_score, signal_score, rank, explanation,
-        )
-    )
-    conn.commit()
-    return cursor.lastrowid
 
 
 def add_shortlist_batch(
@@ -438,8 +372,6 @@ def add_shortlist_batch(
 ) -> int:
     """
     Insert multiple shortlist entries in a single transaction.
-
-    More efficient than calling add_shortlist_entry() in a loop.
 
     Args:
         conn: Active SQLite connection
@@ -695,21 +627,3 @@ def get_candidate_count(conn: sqlite3.Connection) -> int:
     cursor = conn.cursor()
     cursor.execute("SELECT COUNT(*) FROM candidates")
     return cursor.fetchone()[0]
-
-
-def get_all_candidate_ids(conn: sqlite3.Connection) -> List[int]:
-    """
-    Get a list of all candidate IDs.
-
-    Used by build_index.py to iterate over all candidates
-    when building the FAISS vector index.
-
-    Args:
-        conn: Active SQLite connection
-
-    Returns:
-        List of candidate IDs
-    """
-    cursor = conn.cursor()
-    cursor.execute("SELECT id FROM candidates ORDER BY id")
-    return [row[0] for row in cursor.fetchall()]

@@ -14,28 +14,19 @@ Or from the project root:
 import logging
 import os
 
-from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from api.models import HealthResponse
 from api.routes import candidates, chat, interviews, recruitment, resumes
-
-# Load environment variables before anything else
-load_dotenv()
+from config import API_HOST, API_PORT, APP_NAME, APP_VERSION, LOG_LEVEL
 
 # Configure logging
 logging.basicConfig(
-    level=getattr(logging, os.getenv("LOG_LEVEL", "INFO")),
+    level=getattr(logging, LOG_LEVEL),
     format=os.getenv("LOG_FORMAT", "%(asctime)s - %(name)s - %(levelname)s - %(message)s"),
 )
 logger = logging.getLogger(__name__)
-
-# Application metadata from .env
-APP_NAME = os.getenv("APP_NAME", "RecruitX")
-APP_VERSION = os.getenv("APP_VERSION", "1.0.0")
-API_HOST = os.getenv("API_HOST", "0.0.0.0")
-API_PORT = int(os.getenv("API_PORT", "8000"))
 
 # ============================================================
 # FastAPI Application

@@ -1,13 +1,13 @@
 import gc
 import logging
 import os
-from typing import List, Optional
+from typing import List
+
+from config import EMBEDDING_DIMENSION, EMBEDDING_MODEL
 
 logger = logging.getLogger(__name__)
 
-# Constants
-EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2"
-EMBEDDING_DIMENSION = 384
+EMBEDDING_MODEL_NAME = EMBEDDING_MODEL
 
 _shared_model = None
 

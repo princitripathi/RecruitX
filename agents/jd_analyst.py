@@ -11,25 +11,17 @@ The orchestrator agent calls this agent first during the recruitment pipeline.
 import json
 import logging
 import os
-import re
 from typing import List, Optional
 
-from dotenv import load_dotenv
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 from pydantic import BaseModel, Field
 
-# Load environment variables so os.getenv() works
-load_dotenv()
+from config import LLM_MAX_RETRIES, LLM_TEMPERATURE, OPENROUTER_API_KEY, OPENROUTER_BASE_URL, OPENROUTER_MODEL
+from utils.llm_utils import clean_json_response
 
 logger = logging.getLogger(__name__)
-
-# Default configuration loaded from .env (with sensible fallbacks)
-DEFAULT_BASE_URL = os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
-DEFAULT_MODEL = os.getenv("OPENROUTER_MODEL", "mistralai/mistral-7b-instruct:free")
-DEFAULT_TEMPERATURE = float(os.getenv("LLM_TEMPERATURE", "0.1"))
-DEFAULT_MAX_RETRIES = int(os.getenv("LLM_MAX_RETRIES", "1"))
 
 
 class JDAnalysis(BaseModel):
@@ -111,11 +103,11 @@ class JDAnalystAgent:
             temperature: LLM temperature (default: 0.1)
             max_retries: Retry attempts on failure (default: 3)
         """
-        self.api_key = api_key or os.getenv("OPENROUTER_API_KEY", "")
-        self.base_url = base_url or DEFAULT_BASE_URL
-        self.model = model or DEFAULT_MODEL
-        self.temperature = temperature if temperature is not None else DEFAULT_TEMPERATURE
-        self.max_retries = max_retries if max_retries is not None else DEFAULT_MAX_RETRIES
+        self.api_key = api_key or OPENROUTER_API_KEY
+        self.base_url = base_url or OPENROUTER_BASE_URL
+        self.model = model or OPENROUTER_MODEL
+        self.temperature = temperature if temperature is not None else LLM_TEMPERATURE
+        self.max_retries = max_retries if max_retries is not None else LLM_MAX_RETRIES
 
         if not self.api_key or self.api_key == "your_openrouter_api_key_here":
             logger.warning(
@@ -190,16 +182,7 @@ class JDAnalystAgent:
 
                 raw_response = self.chain.invoke({"jd_text": jd_text})
 
-                # Clean the response: handle potential markdown code blocks
-                cleaned = raw_response.strip()
-                if "```" in cleaned:
-                    # Extract JSON from between code block markers
-                    json_match = re.search(r"```(?:json)?\s*([\s\S]*?)```", cleaned)
-                    if json_match:
-                        cleaned = json_match.group(1).strip()
-                    else:
-                        # Remove any remaining backtick fences
-                        cleaned = cleaned.replace("```json", "").replace("```", "").strip()
+                cleaned = clean_json_response(raw_response)
 
                 parsed_json = json.loads(cleaned)
                 result = JDAnalysis.model_validate(parsed_json)
