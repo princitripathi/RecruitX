@@ -13,21 +13,16 @@ import logging
 import os
 from typing import Dict, List, Optional, Tuple
 
-from dotenv import load_dotenv
-
+from config import EMBEDDING_DIMENSION, FAISS_ID_MAP_PATH, FAISS_INDEX_PATH, MAX_CANDIDATES_PER_SEARCH
 from embeddings.embedder import CandidateEmbedder
 from embeddings.vector_store import CandidateVectorStore
 
-# Load environment variables so os.getenv() works
-load_dotenv()
-
 logger = logging.getLogger(__name__)
 
-# Default paths and config from .env
-DEFAULT_FAISS_INDEX_PATH = os.getenv("FAISS_INDEX_PATH", "data/faiss_index.bin")
-DEFAULT_FAISS_ID_MAP_PATH = os.getenv("FAISS_ID_MAP_PATH", "data/faiss_id_map.pkl")
-DEFAULT_EMBEDDING_DIMENSION = int(os.getenv("EMBEDDING_DIMENSION", "384"))
-DEFAULT_TOP_K = int(os.getenv("MAX_CANDIDATES_PER_SEARCH", "20"))
+DEFAULT_FAISS_INDEX_PATH = FAISS_INDEX_PATH
+DEFAULT_FAISS_ID_MAP_PATH = FAISS_ID_MAP_PATH
+DEFAULT_EMBEDDING_DIMENSION = EMBEDDING_DIMENSION
+DEFAULT_TOP_K = MAX_CANDIDATES_PER_SEARCH
 
 
 class CandidateRankerAgent:

@@ -26,12 +26,8 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from dotenv import load_dotenv
-
+from config import DATABASE_PATH
 from database.models import ALL_INDEXES, ALL_TABLES
-
-# Load environment variables from .env file
-load_dotenv()
 
 # Setup logging
 logging.basicConfig(
@@ -39,9 +35,6 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
-
-# Database path from .env (default: data/recruitx.db)
-DATABASE_PATH = os.getenv("DATABASE_PATH", "data/recruitx.db")
 
 # Path to sample candidates CSV
 SAMPLE_CSV_PATH = os.path.join(PROJECT_ROOT, "data", "sample_candidates.csv")

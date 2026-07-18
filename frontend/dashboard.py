@@ -24,7 +24,7 @@ import streamlit as st
 # Configuration
 # ============================================================
 
-API_BASE_URL = os.getenv("API_BASE_URL", "https://recruitx-api.onrender.com")
+API_BASE_URL = os.getenv("API_BASE_URL", "http://localhost:8000")
 APP_NAME = os.getenv("APP_NAME", "RecruitX")
 
 # ============================================================

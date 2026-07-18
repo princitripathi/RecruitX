@@ -1,0 +1,75 @@
+# Version control
+.git/
+.gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.mypy_cache/
+
+# Tool configs
+.cache/
+.claude/
+
+# Environment files (secrets)
+.env
+.env.*
+!.env.example
+
+# Runtime data (rebuilt at container start)
+data/recruitx.db
+data/faiss_index.bin
+data/faiss_id_map.pkl
+uploads/
+backups/
+
+# Documentation (not needed in image)
+docs/
+*.md
+LICENSE
+screenshots/
+
+# Deployment config
+render.yaml
+Dockerfile
+docker-compose*
+.dockerignore
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Streamlit (frontend not in this image)
+frontend/
+.streamlit/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Scripts not needed at runtime
+scripts/validate_candidates.py

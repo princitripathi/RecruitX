@@ -14,15 +14,12 @@ ENV/
 .env.local
 .env.*.local
 
-# Database
+# Database files (auto-generated)
 *.db
 *.sqlite
 *.sqlite3
-data/*.db
-data/*.sqlite
-data/*.sqlite3
 
-# FAISS Index Files (auto-generated, large)
+# FAISS Index Files (auto-generated, large binary)
 data/faiss_index.bin
 data/faiss_id_map.pkl
 
@@ -79,15 +76,12 @@ temp/
 *.bak
 *.backup
 
-# Private documentation
-docs/RecruitX_Master_Guide.md
-
-# Runtime uploads
+# Runtime uploads (resume files uploaded by users)
 uploads/*
 !uploads/.gitkeep
 
 # Backup snapshots
 backups/
 
-# Screenshots (documentation only)
-screenshots/
+# Private documentation
+docs/RecruitX_Master_Guide.md

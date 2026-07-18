@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Validation script for sample_candidates.csv
+scripts/validate_candidates.py — Validate sample_candidates.csv
 
 Checks:
 1. Exactly 50 rows exist
@@ -9,10 +9,17 @@ Checks:
 4. Phone numbers are unique
 5. Data ranges are valid
 6. Experienced candidates have previous_roles populated
+
+Run from the project root:
+    python scripts/validate_candidates.py
 """
 
 import sys
-import pandas as pd
+from pathlib import Path
+
+# Add project root to Python path so imports work when running directly
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(PROJECT_ROOT))
 
 
 def validate_candidates(csv_path: str = "data/sample_candidates.csv") -> bool:
@@ -25,6 +32,8 @@ def validate_candidates(csv_path: str = "data/sample_candidates.csv") -> bool:
     Returns:
         True if validation passes, False otherwise
     """
+    import pandas as pd
+
     errors = []
     warnings = []
 
@@ -32,10 +41,10 @@ def validate_candidates(csv_path: str = "data/sample_candidates.csv") -> bool:
     try:
         df = pd.read_csv(csv_path)
     except FileNotFoundError:
-        print(f"❌ Error: File not found at {csv_path}")
+        print(f"Error: File not found at {csv_path}")
         return False
     except Exception as e:
-        print(f"❌ Error reading CSV: {e}")
+        print(f"Error reading CSV: {e}")
         return False
 
     # 2. Check exactly 50 rows exist
@@ -44,9 +53,6 @@ def validate_candidates(csv_path: str = "data/sample_candidates.csv") -> bool:
         errors.append(f"Expected 50 rows, found {row_count}")
 
     # 3. Ensure all required columns exist
-    # Column order must match Master Guide DB schema:
-    # id, name, email, phone, location, skills, experience_years,
-    # education, previous_roles, profile_completeness, last_active_days
     required_columns = [
         "id",
         "name",
@@ -58,7 +64,7 @@ def validate_candidates(csv_path: str = "data/sample_candidates.csv") -> bool:
         "education",
         "previous_roles",
         "profile_completeness",
-        "last_active_days"
+        "last_active_days",
     ]
     missing_columns = [col for col in required_columns if col not in df.columns]
     if missing_columns:
@@ -79,7 +85,6 @@ def validate_candidates(csv_path: str = "data/sample_candidates.csv") -> bool:
             errors.append(f"Duplicate phone numbers found: {dup_list}")
 
     # Additional validations (warnings)
-    # Check for null values in critical columns (previous_roles can be null for freshers)
     critical_columns = [col for col in required_columns if col != "previous_roles"]
     if not missing_columns:
         null_counts = df[critical_columns].isnull().sum()
@@ -87,25 +92,25 @@ def validate_candidates(csv_path: str = "data/sample_candidates.csv") -> bool:
             if count > 0:
                 warnings.append(f"Column '{col}' has {count} null values")
 
-    # Check experience_years range (0-10)
     if "experience_years" in df.columns:
         invalid_exp = df[(df["experience_years"] < 0) | (df["experience_years"] > 10)]
         if not invalid_exp.empty:
             warnings.append(f"Invalid experience_years (outside 0-10): {len(invalid_exp)} rows")
 
-    # Check profile_completeness range (0-100)
     if "profile_completeness" in df.columns:
-        invalid_completeness = df[(df["profile_completeness"] < 0) | (df["profile_completeness"] > 100)]
+        invalid_completeness = df[
+            (df["profile_completeness"] < 0) | (df["profile_completeness"] > 100)
+        ]
         if not invalid_completeness.empty:
-            warnings.append(f"Invalid profile_completeness (outside 0-100): {len(invalid_completeness)} rows")
+            warnings.append(
+                f"Invalid profile_completeness (outside 0-100): {len(invalid_completeness)} rows"
+            )
 
-    # Check last_active_days is positive
     if "last_active_days" in df.columns:
         invalid_active = df[df["last_active_days"] < 0]
         if not invalid_active.empty:
             warnings.append(f"Negative last_active_days: {len(invalid_active)} rows")
 
-    # Check that experienced candidates (>1 year) have previous_roles populated
     if "previous_roles" in df.columns and "experience_years" in df.columns:
         experienced_no_roles = df[
             (df["experience_years"] > 1) & (df["previous_roles"].isnull())
@@ -127,7 +132,6 @@ def validate_candidates(csv_path: str = "data/sample_candidates.csv") -> bool:
     print(f"  - Unique emails: {df['email'].nunique()}")
     print(f"  - Unique phones: {df['phone'].nunique()}")
 
-    # Count previous_roles stats
     if "previous_roles" in df.columns:
         filled = df["previous_roles"].notna().sum()
         blank = df["previous_roles"].isna().sum()
