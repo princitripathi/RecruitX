@@ -1226,7 +1226,7 @@ def api_get(endpoint: str) -> Optional[Any]:
         Parsed JSON response, or None if the request failed.
     """
     try:
-        resp = requests.get(f"{API_BASE_URL}{endpoint}", timeout=120)
+        resp = requests.get(f"{API_BASE_URL}{endpoint}", timeout=1200)
         resp.raise_for_status()
         return resp.json()
     except requests.exceptions.ConnectionError:
