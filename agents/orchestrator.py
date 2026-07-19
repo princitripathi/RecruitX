@@ -57,35 +57,35 @@ class RecruitmentOrchestrator:
     """
 
     def __init__(
-    self,
-    jd_analyst=None,
-    candidate_ranker=None,
-    signal_analyzer=None,
-    scoring_engine=None,
-    skill_gap_analyzer=None,
-):
-    from agents.jd_analyst import JDAnalystAgent
-    from agents.candidate_ranker import CandidateRankerAgent
-    from agents.signal_analyzer import SignalAnalyzerAgent
-    from scoring.scoring_engine import ScoringEngine
-    from scoring.skill_gap import SkillGapAnalyzer
+        self,
+        jd_analyst=None,
+        candidate_ranker=None,
+        signal_analyzer=None,
+        scoring_engine=None,
+        skill_gap_analyzer=None, 
+    ):
+        from agents.jd_analyst import JDAnalystAgent
+        from agents.candidate_ranker import CandidateRankerAgent
+        from agents.signal_analyzer import SignalAnalyzerAgent
+        from scoring.scoring_engine import ScoringEngine
+        from scoring.skill_gap import SkillGapAnalyzer
 
-    logger.info("Creating JD Analyst")
-    self.jd_analyst = jd_analyst or JDAnalystAgent()
+        logger.info("Creating JD Analyst")
+        self.jd_analyst = jd_analyst or JDAnalystAgent()
 
-    logger.info("Creating Candidate Ranker")
-    self.candidate_ranker = candidate_ranker or CandidateRankerAgent()
+        logger.info("Creating Candidate Ranker")
+        self.candidate_ranker = candidate_ranker or CandidateRankerAgent()
 
-    logger.info("Creating Signal Analyzer")
-    self.signal_analyzer = signal_analyzer or SignalAnalyzerAgent()
+        logger.info("Creating Signal Analyzer")
+        self.signal_analyzer = signal_analyzer or SignalAnalyzerAgent()
 
-    logger.info("Creating Scoring Engine")
-    self.scoring_engine = scoring_engine or ScoringEngine()
+        logger.info("Creating Scoring Engine")
+        self.scoring_engine = scoring_engine or ScoringEngine()
 
-    logger.info("Creating Skill Gap Analyzer")
-    self.skill_gap_analyzer = skill_gap_analyzer or SkillGapAnalyzer()
+        logger.info("Creating Skill Gap Analyzer")
+        self.skill_gap_analyzer = skill_gap_analyzer or SkillGapAnalyzer()
 
-    logger.info("RecruitmentOrchestrator initialized successfully")
+        logger.info("RecruitmentOrchestrator initialized successfully")
 
     def run_recruitment_pipeline(
         self,
