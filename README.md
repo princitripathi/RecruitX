@@ -39,7 +39,6 @@ From raw job description to ranked shortlist — powered by LLM agents, semantic
 - [Running with Docker](#running-with-docker)
 - [API Documentation](#api-documentation)
 - [Screenshots](#screenshots)
-- [Demo](#demo)
 - [Project Highlights](#project-highlights)
 - [Engineering Challenges](#engineering-challenges)
 - [Future Improvements](#future-improvements)
@@ -394,20 +393,6 @@ Response includes a sorted shortlist with each candidate's semantic, skill, and 
 | *Interactive score distribution charts* |
 
 > **Note:** Screenshots are from the live application running locally.
-
----
-
-## Demo
-
-### Local Demonstration
-
-RecruitX can be demonstrated locally by running the FastAPI backend and the Streamlit dashboard using the installation guide provided above.
-
-### Demo Video
-
-Coming Soon
-
-A short walkthrough demonstrating the complete recruitment pipeline, including job description analysis, semantic candidate search, candidate ranking, and recruiter dashboard.
 
 ---
 
