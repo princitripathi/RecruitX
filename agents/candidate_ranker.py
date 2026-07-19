@@ -68,7 +68,6 @@ class CandidateRankerAgent:
             self.embedder = embedder
             logger.debug("Using injected embedder")
         else:
-            logger.info("Initializing CandidateEmbedder...")
             self.embedder = CandidateEmbedder()
 
         # Initialize or use injected vector store
@@ -76,14 +75,8 @@ class CandidateRankerAgent:
             self.vector_store = vector_store
             logger.debug("Using injected vector store")
         else:
-            logger.info("Loading FAISS index from disk...")
             self.vector_store = CandidateVectorStore(dimension=self.dimension)
             self.vector_store.load(self.index_path, self.id_map_path)
-
-        logger.info(
-            "Initialized CandidateRankerAgent with %d vectors in FAISS index",
-            self.vector_store.index.ntotal,
-        )
 
     def rank_candidates(
         self,

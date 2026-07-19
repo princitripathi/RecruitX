@@ -30,7 +30,6 @@ Usage:
     # }
 """
 
-import gc
 import logging
 import time
 from typing import Any, Dict, List, Optional
@@ -70,22 +69,11 @@ class RecruitmentOrchestrator:
         from scoring.scoring_engine import ScoringEngine
         from scoring.skill_gap import SkillGapAnalyzer
 
-        logger.info("Creating JD Analyst")
         self.jd_analyst = jd_analyst or JDAnalystAgent()
-
-        logger.info("Creating Candidate Ranker")
         self.candidate_ranker = candidate_ranker or CandidateRankerAgent()
-
-        logger.info("Creating Signal Analyzer")
         self.signal_analyzer = signal_analyzer or SignalAnalyzerAgent()
-
-        logger.info("Creating Scoring Engine")
         self.scoring_engine = scoring_engine or ScoringEngine()
-
-        logger.info("Creating Skill Gap Analyzer")
         self.skill_gap_analyzer = skill_gap_analyzer or SkillGapAnalyzer()
-
-        logger.info("RecruitmentOrchestrator initialized successfully")
 
     def run_recruitment_pipeline(
         self,
@@ -143,8 +131,6 @@ class RecruitmentOrchestrator:
             logger.error("JD Analyst failed: %s", str(e))
             raise RuntimeError(f"JD Analyst failed: {e}")
 
-        gc.collect()
-
         # ---------------------------------------------------------------
         # Step 2: Candidate Ranker — Semantic search via FAISS
         # ---------------------------------------------------------------
@@ -159,8 +145,6 @@ class RecruitmentOrchestrator:
         except Exception as e:
             logger.error("Candidate ranking failed: %s", str(e))
             raise RuntimeError(f"Candidate ranking failed: {e}")
-
-        gc.collect()
 
         if not ranked_candidates:
             elapsed = (time.time() - start_time) * 1000
@@ -189,8 +173,6 @@ class RecruitmentOrchestrator:
         # ---------------------------------------------------------------
         logger.info("Steps 4-6/8: Scoring %d candidates...", len(ranked_candidates))
         entries = self._process_candidates(ranked_candidates, candidate_map, jd_analysis)
-
-        gc.collect()
 
         if not entries:
             elapsed = (time.time() - start_time) * 1000

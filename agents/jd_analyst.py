@@ -115,11 +115,6 @@ class JDAnalystAgent:
                 "Set it in .env file or pass api_key parameter."
             )
 
-        logger.info(
-            "Initializing JDAnalystAgent with model=%s, temperature=%.1f, max_retries=%d",
-            self.model, self.temperature, self.max_retries
-        )
-
         self.chain = self._create_chain()
 
     def _create_chain(self):

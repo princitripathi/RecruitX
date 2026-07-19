@@ -25,7 +25,7 @@ class SignalAnalyzerAgent:
 
     def __init__(self):
         """Initialize the Signal Analyzer Agent."""
-        logger.info("Initializing SignalAnalyzerAgent")
+        pass
 
     def calculate_recency_score(self, last_active_days: int) -> float:
         """
