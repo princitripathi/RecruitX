@@ -346,7 +346,7 @@ docker run -d \
 | Method | Endpoint | Purpose | Request Body | Response |
 |--------|----------|---------|-------------|----------|
 | `GET` | `/api/health` | Server health check | — | `{status, app, version}` |
-| `POST` | `/api/recruit` | Run recruitment pipeline | `{job_description, top_k?}` | `{shortlist, execution_time_ms}` |
+| `POST` | `/api/recruit` | Run recruitment pipeline | `{job_description, top_k?}` | `{shortlist, processing_time_ms}` |
 | `GET` | `/api/candidates` | List all candidates | — | `{candidates: [...]}` |
 | `POST` | `/api/candidates` | Add a new candidate | `{name, email, skills, ...}` | `{candidate, message}` |
 | `GET` | `/api/candidates/{id}` | Get candidate by ID | — | `{candidate}` |
