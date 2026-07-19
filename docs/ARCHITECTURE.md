@@ -1846,7 +1846,6 @@ RecruitX/
 │   └── ARCHITECTURE.md              # This file
 │
 ├── uploads/                         # Resume file uploads (runtime)
-├── backups/                         # Database and FAISS index backups
 │
 ├── .env                             # Environment variables (not committed to git)
 ├── .gitignore

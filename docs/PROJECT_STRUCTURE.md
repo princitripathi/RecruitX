@@ -30,7 +30,6 @@ Presentation ──► API/Frontend ──► Agents ──► Scoring/Embedding
 - **`tests/`** — Test suite: pytest unit and integration tests (13 files)
 - **`data/`** — Data artifacts: sample CSV, SQLite database, FAISS index files, sample JDs
 - **`docs/`** — Documentation: architecture, API reference, project structure, master guide
-- **`backups/`** — Database and FAISS index backups
 - **`uploads/`** — Uploaded resume files (PDF/DOCX with UUID filenames)
 
 ---
@@ -66,11 +65,6 @@ RecruitX/
 │       ├── interviews.py                # POST /api/interview-questions (singleton generator)
 │       ├── recruitment.py               # POST /api/recruit, POST /api/feedback
 │       └── resumes.py                   # POST /api/upload-resume (PDF/DOCX, 10MB max)
-│
-├── backups/
-│   ├── faiss_id_map_20260711_202313.pkl  # FAISS ID map backup
-│   ├── faiss_index_20260711_202313.bin   # FAISS index backup
-│   └── recruitx_20260711_202313.db       # SQLite database backup
 │
 ├── data/
 │   ├── faiss_id_map.pkl                 # FAISS ID-to-candidate mapping (auto-generated)
@@ -385,20 +379,6 @@ RecruitX/
 
 ---
 
-### 📁 `backups/` — Database Backups
-
-**Purpose:** Automatic timestamped backups of the SQLite database and FAISS index files.
-
-**Business responsibility:** Provides restore points for the database and vector index.
-
-| File | Responsibility |
-|------|----------------|
-| `recruitx_20260711_202313.db` | SQLite database backup (dated) |
-| `faiss_index_20260711_202313.bin` | FAISS index backup (dated) |
-| `faiss_id_map_20260711_202313.pkl` | FAISS ID map backup (dated) |
-
----
-
 ### 📁 `uploads/` — Resume Files
 
 **Purpose:** Stores uploaded resume files with UUID-based filenames to prevent collisions.
@@ -486,9 +466,7 @@ RecruitX/
 | `data/sample_jds/software_engineer.txt` | Sample JD for Python/FastAPI backend engineer |
 | `data/sample_jds/data_scientist.txt` | Sample JD for ML/Data Science role |
 | `data/sample_jds/product_manager.txt` | Sample JD for Technical Product Manager |
-| `backups/recruitx_20260711_202313.db` | Timestamped DB backup |
-| `backups/faiss_index_20260711_202313.bin` | Timestamped FAISS backup |
-| `backups/faiss_id_map_20260711_202313.pkl` | Timestamped ID map backup |
+
 
 ---
 
@@ -769,7 +747,6 @@ At this point:
 | `tests/` | Test suite — 13 test files with pytest, session-scoped fixtures, unit + integration tests |
 | `docs/` | Documentation — Architecture, API reference, project structure, private master guide |
 | `data/` | Data artifacts — Sample candidates CSV, sample JDs, SQLite DB, FAISS index files |
-| `backups/` | Database and FAISS index backups with timestamps |
 | `uploads/` | Uploaded resume files with UUID filenames |
 
 ---

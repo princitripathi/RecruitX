@@ -351,7 +351,7 @@ The FAISS index powers the semantic (meaning-based) candidate search. It convert
 With the virtual environment **activated**, run:
 
 ```bash
-python embeddings/build_index.py
+python scripts/build_index.py
 ```
 
 ### What happens
@@ -627,7 +627,7 @@ Then update the dashboard by setting `API_BASE_URL=http://localhost:8001`.
 
 **Fix:** Run the index builder:
 ```bash
-python embeddings/build_index.py
+python scripts/build_index.py
 ```
 
 ### `Error: No candidates found`
@@ -734,7 +734,7 @@ pip install -r requirements.txt
 python database/db_setup.py
 
 # 6. Build FAISS index
-python embeddings/build_index.py
+python scripts/build_index.py
 
 # 7. Start API (keep open)
 uvicorn api.main:app --reload --port 8000

@@ -231,7 +231,6 @@ RecruitX/
 │   └── faiss_id_map.pkl       #   FAISS ID mapping (auto-generated)
 ├── screenshots/               # UI screenshots
 ├── uploads/                   # Uploaded resume files (UUID-named)
-├── backups/                   # Database and FAISS index backups
 ├── docs/                      # Documentation
 │   ├── API_REFERENCE.md       #   REST API reference
 │   ├── ARCHITECTURE.md        #   System architecture
