@@ -336,6 +336,14 @@ docker run -d \
 
 ---
 
+## Deployment Note
+
+RecruitX is fully functional in a local development environment.
+
+Cloud deployment of the AI inference pipeline may require additional compute resources depending on the selected embedding model.
+
+---
+
 ## API Documentation
 
 > **Complete API reference:** [docs/API_REFERENCE.md](./docs/API_REFERENCE.md)
