@@ -60,6 +60,9 @@ RUN mkdir -p uploads data
 # Initialize the database at build time (tables + sample data)
 RUN python database/db_setup.py
 
+# Generate FAISS index at build time
+RUN python scripts/build_index.py
+
 EXPOSE 8000
 
 CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]
